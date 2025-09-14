@@ -3,7 +3,6 @@ import {
   Card, 
   Button, 
   Space, 
-  Select, 
   message, 
   Row, 
   Col, 
@@ -17,8 +16,6 @@ import {
 } from '@ant-design/icons';
 import type { JobData, JobFilters as JobFiltersType } from '../types/job.type';
 import { fetchJobs, deleteJob, toggleJobStatus } from '../apis/job.api';
-import { jobCategoriesAPI } from '../apis/job-categories.api';
-import { formatCurrency } from '../utils/currency';
 import JobCreateForm from '../components/JobCreateForm';
 import JobEditForm from '../components/JobEditForm';
 import JobDetail from '../components/JobDetail';
@@ -60,19 +57,9 @@ const Jobs: React.FC = () => {
     }
   };
 
-  // Load job categories
-  const loadJobCategories = async () => {
-    try {
-      const response = await jobCategoriesAPI.getActiveCategories();
-      setJobCategories(response.data);
-    } catch (error: any) {
-      console.error('Failed to load job categories:', error);
-    }
-  };
 
   useEffect(() => {
     loadJobs();
-    loadJobCategories();
   }, [filters]);
 
 
@@ -87,16 +74,6 @@ const Jobs: React.FC = () => {
     }
   };
 
-  // Handle toggle job status
-  const handleToggleStatus = async (id: string, currentStatus: boolean) => {
-    try {
-      await toggleJobStatus(id);
-      message.success(`${currentStatus ? 'Tạm dừng' : 'Kích hoạt'} tin tuyển dụng thành công`);
-      loadJobs();
-    } catch (error: any) {
-      message.error(error.message || 'Không thể cập nhật trạng thái');
-    }
-  };
 
   // Modal handlers
   const showCreateModal = () => setCreateModalVisible(true);
@@ -198,7 +175,6 @@ const Jobs: React.FC = () => {
               </div>
             ) : (
               <JobList
-                onCreateJob={showCreateModal}
                 onEditJob={showEditModal}
                 onViewJob={showDetailModal}
                 onDeleteJob={handleDeleteJob}

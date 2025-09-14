@@ -131,8 +131,7 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
   // Handle array field changes for skills only
   const handleArrayFieldChange = (
     index: number,
-    value: string,
-    field: 'skills'
+    value: string
   ) => {
     const newArray = [...skills];
     newArray[index] = value;
@@ -208,7 +207,7 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
                   type="link"
                   danger
                   icon={<CloseOutlined />}
-                  onClick={() => removeArrayItem(index, field)}
+                  onClick={() => removeArrayItem(index)}
                 />
               )}
             </Space>
@@ -216,7 +215,7 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
           <Button
             type="dashed"
             icon={<PlusOutlined />}
-            onClick={() => addArrayItem(field)}
+            onClick={() => addArrayItem()}
             className="w-full rounded-lg"
             size="large"
           >

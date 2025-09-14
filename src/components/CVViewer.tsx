@@ -120,12 +120,27 @@ const CVViewer: React.FC<CVViewerProps> = ({
 
         // Disable editing interactions
         try {
-          editor.off('all');
-          if (editor.Panels) editor.Panels.getPanels().reset();
-          if (editor.BlockManager) editor.BlockManager.getAll().reset();
-          if (editor.LayerManager) editor.LayerManager.getAll().reset();
-          if (editor.SelectorManager) editor.SelectorManager.getAll().reset();
-          if (editor.StyleManager) editor.StyleManager.getAll().reset();
+          editor.off();
+          if (editor.Panels && editor.Panels.getPanels) {
+            const panels = editor.Panels.getPanels();
+            if (panels && panels.reset) panels.reset();
+          }
+          if (editor.BlockManager && editor.BlockManager.getAll) {
+            const blocks = editor.BlockManager.getAll();
+            if (blocks && blocks.reset) blocks.reset();
+          }
+          if (editor.LayerManager && editor.LayerManager.getAll) {
+            const layers = editor.LayerManager.getAll();
+            if (layers && layers.reset) layers.reset();
+          }
+          if (editor.SelectorManager && editor.SelectorManager.getAll) {
+            const selectors = editor.SelectorManager.getAll();
+            if (selectors && selectors.reset) selectors.reset();
+          }
+          if (editor.StyleManager && editor.StyleManager.getAll) {
+            const styles = editor.StyleManager.getAll();
+            if (styles && styles.reset) styles.reset();
+          }
           
           editor.on('component:selected', (e) => {
             e.stopPropagation();
