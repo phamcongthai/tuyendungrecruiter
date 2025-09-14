@@ -9,7 +9,6 @@ import {
   TeamOutlined,
   FolderOutlined,
   StarOutlined,
-  EditOutlined,
   BankOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';

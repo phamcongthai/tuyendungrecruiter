@@ -17,12 +17,6 @@ import {
   PlusOutlined
 } from '@ant-design/icons';
 import type { JobData, JobFilters as JobFiltersType } from '../types/job.type';
-import { 
-  JobType, 
-  WorkingMode, 
-  JOB_TYPE_LABELS, 
-  WORKING_MODE_LABELS
-} from '../types/job.type';
 import { fetchJobs, deleteJob, toggleJobStatus } from '../apis/job.api';
 import { jobCategoriesAPI } from '../apis/job-categories.api';
 import { formatCurrency } from '../utils/currency';
