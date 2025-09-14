@@ -8,7 +8,7 @@ import { useUser } from '../contexts/UserContext';
 import './Layout.css';
 
 const MainLayout: React.FC = () => {
-  const { user, loading } = useUser();
+  const { user } = useUser();
   
   const handleOverlayClick = () => {
     const sidebar = document.querySelector('.modern-sidebar');

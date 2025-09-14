@@ -120,12 +120,12 @@ const CVViewer: React.FC<CVViewerProps> = ({
 
         // Disable editing interactions
         try {
-          editor.off();
-          if (editor.Panels) editor.Panels.getPanels().reset([]);
-          if (editor.BlockManager) editor.BlockManager.getAll().reset([]);
-          if (editor.LayerManager) editor.LayerManager.getAll().reset([]);
-          if (editor.SelectorManager) editor.SelectorManager.getAll().reset([]);
-          if (editor.StyleManager) editor.StyleManager.getAll().reset([]);
+          editor.off('all');
+          if (editor.Panels) editor.Panels.getPanels().reset();
+          if (editor.BlockManager) editor.BlockManager.getAll().reset();
+          if (editor.LayerManager) editor.LayerManager.getAll().reset();
+          if (editor.SelectorManager) editor.SelectorManager.getAll().reset();
+          if (editor.StyleManager) editor.StyleManager.getAll().reset();
           
           editor.on('component:selected', (e) => {
             e.stopPropagation();
@@ -147,9 +147,9 @@ const CVViewer: React.FC<CVViewerProps> = ({
         console.log('Step 4: Loading CV template and applying data');
         await loadCVTemplate(data);
         
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error initializing CV viewer:', error);
-        message.error('Không thể tải CV: ' + (error.message || 'Lỗi không xác định'));
+        message.error('Không thể tải CV: ' + (error?.message || 'Lỗi không xác định'));
       } finally {
         setLoading(false);
       }
@@ -231,8 +231,8 @@ const CVViewer: React.FC<CVViewerProps> = ({
             Object.keys(data.user.cvFields).forEach((key) => {
               const element = doc.querySelector(`[data-field="${key}"]`);
               if (element) {
-                element.textContent = String(data.user.cvFields[key] || '');
-                console.log(`Applied field ${key}:`, data.user.cvFields[key]);
+                element.textContent = String(data.user.cvFields?.[key] || '');
+                console.log(`Applied field ${key}:`, data.user.cvFields?.[key]);
               }
             });
           }

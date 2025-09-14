@@ -1,6 +1,5 @@
 import api from "./interceptor.api";
 import type { 
-  RecruiterProfile, 
   CreateRecruiterData, 
   UpdateRecruiterData, 
   ProfileResponse 

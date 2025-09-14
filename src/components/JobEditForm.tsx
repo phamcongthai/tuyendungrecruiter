@@ -14,16 +14,13 @@ import {
   message,
   Space,
   Spin,
-  Divider,
   Steps,
-  Tag,
 } from 'antd';
 import {
   SaveOutlined,
   CloseOutlined,
   PlusOutlined,
   DollarOutlined,
-  CalendarOutlined,
   EnvironmentOutlined,
   FileTextOutlined,
   TrophyOutlined,
@@ -143,14 +140,13 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
   };
 
   // Add new item to skills array
-  const addArrayItem = (field: 'skills') => {
+  const addArrayItem = () => {
     setSkills([...skills, '']);
   };
 
   // Remove item from skills array
   const removeArrayItem = (
-    index: number,
-    field: 'skills'
+    index: number
   ) => {
     if (skills.length > 1) {
       const newArray = skills.filter((_, i) => i !== index);

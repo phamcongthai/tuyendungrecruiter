@@ -23,7 +23,6 @@ import { formatCurrency } from '../utils/currency';
 import './JobList.css';
 
 interface JobListProps {
-  onCreateJob: () => void;
   onEditJob: (job: JobData) => void;
   onViewJob: (job: JobData) => void;
   onDeleteJob: (jobId: string) => void;
@@ -32,11 +31,10 @@ interface JobListProps {
 }
 
 const JobList: React.FC<JobListProps> = ({ 
-  onCreateJob, 
   onEditJob, 
   onViewJob, 
-  onDeleteJob,
-  filters, 
+  onDeleteJob, 
+  filters,
   onFiltersChange 
 }) => {
   const [jobs, setJobs] = useState<JobData[]>([]);

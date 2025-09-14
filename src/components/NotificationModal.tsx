@@ -1,10 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Modal, List, Avatar, Typography, Button, Space, Empty, Spin, Tooltip } from 'antd';
 import { 
   CheckCircleOutlined, 
   DeleteOutlined, 
   ReloadOutlined,
-  UserOutlined,
   FileTextOutlined,
   SettingOutlined,
   MessageOutlined,

@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Badge, Dropdown, Menu, Avatar, Button, Tooltip } from 'antd';
+import { Dropdown, Menu, Button, Tooltip } from 'antd';
 import { 
   UserOutlined, 
-  BellOutlined, 
   LogoutOutlined,
   SettingOutlined,
   DashboardOutlined,
@@ -275,7 +274,7 @@ const Header: React.FC = () => {
             </div>
             <div className="user-info">
               <h4>{user?.fullName || 'Nhà tuyển dụng'}</h4>
-              <p>{profileData?.company || user?.email || 'Quản lý tuyển dụng'}</p>
+              <p>{profileData?.company?.name || user?.email || 'Quản lý tuyển dụng'}</p>
             </div>
           </div>
         </Dropdown>

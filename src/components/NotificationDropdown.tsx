@@ -1,11 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { List, Avatar, Typography, Button, Space, Empty, Spin, Tooltip } from 'antd';
 import { 
   CheckCircleOutlined, 
   DeleteOutlined, 
   ReloadOutlined,
-  UserOutlined,
   FileTextOutlined,
   SettingOutlined,
   MessageOutlined,

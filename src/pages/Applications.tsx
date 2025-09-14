@@ -100,7 +100,10 @@ const ApplicationsPage: React.FC = () => {
       });
       
       console.log(JSON.stringify(response, null, 2));
-      setJobs(response.data || []);
+      setJobs((response.data || []).map((job: any) => ({
+        ...job,
+        applicationCount: 0
+      })));
       setJobsTotal(response.total || 0);
     } catch (error: any) {
       console.error('Error loading jobs:', error);
@@ -209,7 +212,7 @@ const ApplicationsPage: React.FC = () => {
       title: 'Số ứng viên',
       dataIndex: 'applicationCount',
       key: 'applicationCount',
-      render: (count: number, record: JobWithApplications) => {
+      render: (_: number, record: JobWithApplications) => {
         const appCount = record.applicationCount || 0;
         return (
           <Badge 

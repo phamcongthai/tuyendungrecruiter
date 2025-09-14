@@ -9,7 +9,6 @@ import {
   Col, 
   Typography, 
   Modal,
-  Tooltip,
   Empty,
   Spin
 } from 'antd';
@@ -24,10 +23,8 @@ import JobCreateForm from '../components/JobCreateForm';
 import JobEditForm from '../components/JobEditForm';
 import JobDetail from '../components/JobDetail';
 import JobList from '../components/JobList';
-import dayjs from 'dayjs';
 import './Jobs.css';
 
-const { Option } = Select;
 const { Title, Text } = Typography;
 
 const Jobs: React.FC = () => {
@@ -36,7 +33,6 @@ const Jobs: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
   const [selectedJob, setSelectedJob] = useState<JobData | null>(null);
-  const [jobCategories, setJobCategories] = useState<any[]>([]);
   
   // Modal states
   const [createModalVisible, setCreateModalVisible] = useState(false);
@@ -79,32 +75,6 @@ const Jobs: React.FC = () => {
     loadJobCategories();
   }, [filters]);
 
-  // Handle search
-  const handleSearch = (value: string) => {
-    setFilters({
-      ...filters,
-      search: value,
-      page: 1,
-    });
-  };
-
-  // Handle filter change
-  const handleFilterChange = (key: keyof JobFiltersType, value: any) => {
-    setFilters({
-      ...filters,
-      [key]: value,
-      page: 1,
-    });
-  };
-
-  // Handle pagination
-  const handleTableChange = (pagination: any) => {
-    setFilters({
-      ...filters,
-      page: pagination.current,
-      limit: pagination.pageSize,
-    });
-  };
 
   // Handle delete job
   const handleDeleteJob = async (id: string) => {
@@ -163,47 +133,6 @@ const Jobs: React.FC = () => {
     message.success('Cập nhật tin tuyển dụng thành công!');
   };
 
-  // Helper functions for job card rendering
-  const getDeadlineInfo = (deadline: string | undefined) => {
-    if (!deadline) return { text: 'Không có hạn', color: 'default', isExpired: false };
-        
-        const deadlineDate = new Date(deadline);
-        const now = new Date();
-        const diffTime = deadlineDate.getTime() - now.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        
-        if (diffDays < 0) {
-      return { text: 'Đã hết hạn', color: 'red', isExpired: true };
-    } else if (diffDays === 0) {
-      return { text: 'Hết hạn hôm nay', color: 'orange', isExpired: false };
-        } else if (diffDays <= 3) {
-      return { text: `Còn ${diffDays} ngày`, color: 'orange', isExpired: false };
-        } else if (diffDays <= 7) {
-      return { text: `Còn ${diffDays} ngày`, color: 'blue', isExpired: false };
-        } else {
-      return { text: `Còn ${diffDays} ngày`, color: 'green', isExpired: false };
-    }
-  };
-
-  const getSalaryDisplay = (job: JobData) => {
-    if (!job.salaryMin && !job.salaryMax) {
-      return 'Thỏa thuận';
-    }
-    
-    if (job.salaryMin && job.salaryMax) {
-      return `${formatCurrency(job.salaryMin)} - ${formatCurrency(job.salaryMax)}`;
-    }
-    
-    if (job.salaryMin) {
-      return `Từ ${formatCurrency(job.salaryMin)}`;
-    }
-    
-    if (job.salaryMax) {
-      return `Tối đa ${formatCurrency(job.salaryMax)}`;
-    }
-    
-    return 'Thỏa thuận';
-  };
 
   // Removed reset button and explicit handler to simplify UI
 

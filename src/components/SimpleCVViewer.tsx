@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Spin, message } from 'antd';
+import React from 'react';
+import { Card } from 'antd';
 import { FileTextOutlined } from '@ant-design/icons';
 
 interface SimpleCVViewerProps {
@@ -19,7 +19,6 @@ interface SimpleCVViewerProps {
 }
 
 const SimpleCVViewer: React.FC<SimpleCVViewerProps> = ({ userProfile, account }) => {
-  const [loading, setLoading] = useState(false);
 
   // Tạo dữ liệu CV từ thông tin có sẵn
   const cvData = {

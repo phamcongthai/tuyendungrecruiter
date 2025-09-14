@@ -24,7 +24,6 @@ import {
   DeleteOutlined,
   PlusOutlined,
   EyeOutlined,
-  SearchOutlined,
   PhoneOutlined,
   MailOutlined,
   GlobalOutlined,
@@ -43,7 +42,7 @@ const { Search } = Input;
 
 const Company: React.FC = () => {
   const [form] = Form.useForm();
-  const { user } = useUser();
+  useUser();
   const [loading, setLoading] = useState(false);
   const [companies, setCompanies] = useState<CompanyProfile[]>([]);
   const [filteredCompanies, setFilteredCompanies] = useState<CompanyProfile[]>([]);
@@ -213,13 +212,6 @@ const Company: React.FC = () => {
     }
   };
 
-  const handleRemovePreview = () => {
-    setPreviewUrl('');
-    setSelectedFile(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = '';
-    }
-  };
 
   const handleSubmit = async (values: any) => {
     setModalLoading(true);
