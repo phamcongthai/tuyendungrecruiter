@@ -120,26 +120,66 @@ const CVViewer: React.FC<CVViewerProps> = ({
 
         // Disable editing interactions
         try {
-          editor.off();
-          if (editor.Panels && editor.Panels.getPanels) {
+          // Remove all event listeners by providing empty callback
+          editor.off('component:selected', () => {});
+          editor.off('component:add', () => {});
+          editor.off('component:remove', () => {});
+          editor.off('component:update', () => {});
+          
+          // Disable panels
+          if (editor.Panels) {
             const panels = editor.Panels.getPanels();
-            if (panels && panels.reset) panels.reset();
+            if (panels && Array.isArray(panels)) {
+              panels.forEach((panel: any) => {
+                if (panel && panel.set) {
+                  panel.set('visible', false);
+                }
+              });
+            }
           }
-          if (editor.BlockManager && editor.BlockManager.getAll) {
+          // Disable block manager
+          if (editor.BlockManager) {
             const blocks = editor.BlockManager.getAll();
-            if (blocks && blocks.reset) blocks.reset();
+            if (blocks && Array.isArray(blocks)) {
+              blocks.forEach((block: any) => {
+                if (block && block.set) {
+                  block.set('visible', false);
+                }
+              });
+            }
           }
-          if (editor.LayerManager && editor.LayerManager.getAll) {
+          // Disable layer manager
+          if (editor.LayerManager) {
             const layers = editor.LayerManager.getAll();
-            if (layers && layers.reset) layers.reset();
+            if (layers && Array.isArray(layers)) {
+              layers.forEach((layer: any) => {
+                if (layer && layer.set) {
+                  layer.set('visible', false);
+                }
+              });
+            }
           }
-          if (editor.SelectorManager && editor.SelectorManager.getAll) {
+          // Disable selector manager
+          if (editor.SelectorManager) {
             const selectors = editor.SelectorManager.getAll();
-            if (selectors && selectors.reset) selectors.reset();
+            if (selectors && Array.isArray(selectors)) {
+              selectors.forEach((selector: any) => {
+                if (selector && selector.set) {
+                  selector.set('visible', false);
+                }
+              });
+            }
           }
-          if (editor.StyleManager && editor.StyleManager.getAll) {
+          // Disable style manager
+          if (editor.StyleManager) {
             const styles = editor.StyleManager.getAll();
-            if (styles && styles.reset) styles.reset();
+            if (styles && Array.isArray(styles)) {
+              styles.forEach((style: any) => {
+                if (style && style.set) {
+                  style.set('visible', false);
+                }
+              });
+            }
           }
           
           editor.on('component:selected', (e) => {

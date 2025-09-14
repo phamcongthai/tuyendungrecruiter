@@ -15,7 +15,7 @@ import {
   PlusOutlined
 } from '@ant-design/icons';
 import type { JobData, JobFilters as JobFiltersType } from '../types/job.type';
-import { fetchJobs, deleteJob, toggleJobStatus } from '../apis/job.api';
+import { fetchJobs, deleteJob } from '../apis/job.api';
 import JobCreateForm from '../components/JobCreateForm';
 import JobEditForm from '../components/JobEditForm';
 import JobDetail from '../components/JobDetail';

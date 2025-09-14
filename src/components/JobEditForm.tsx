@@ -186,7 +186,6 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
 
   // Render array field for skills only
   const renderArrayField = (
-    field: 'skills',
     label: string,
     placeholder: string
   ) => {
@@ -197,7 +196,7 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
             <Space key={index} className="w-full">
               <Input
                 value={value}
-                onChange={(e) => handleArrayFieldChange(index, e.target.value, field)}
+                onChange={(e) => handleArrayFieldChange(index, e.target.value)}
                 placeholder={`${placeholder} ${index + 1}`}
                 className="flex-1 rounded-lg"
                 size="large"
@@ -515,7 +514,7 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
               </Col>
 
               <Col xs={24} md={8}>
-                {renderArrayField('skills', 'Kỹ năng cần thiết', 'Nhập kỹ năng')}
+                {renderArrayField('Kỹ năng cần thiết', 'Nhập kỹ năng')}
               </Col>
 
               <Col xs={24} md={8}>
