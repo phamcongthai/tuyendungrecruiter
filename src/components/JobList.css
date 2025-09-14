@@ -1,0 +1,236 @@
+/* JobList Component Styles - Simple Table Layout */
+
+.job-list-container {
+  background: #ffffff;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* Job Table */
+.job-table-container {
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #f0f0f0;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+
+.job-table {
+  width: 100%;
+}
+
+.job-table .ant-table-thead > tr > th {
+  background: #fafafa;
+  border-bottom: 1px solid #f0f0f0;
+  font-weight: 600;
+  color: #262626;
+  padding: 16px 12px;
+  font-size: 14px;
+}
+
+.job-table .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 16px 12px;
+  font-size: 14px;
+}
+
+.job-table .ant-table-tbody > tr:hover > td {
+  background: #f5f5f5;
+}
+
+/* Job Title Cell */
+.job-title-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.job-title-main {
+  font-weight: 500;
+  color: #262626;
+  font-size: 14px;
+}
+
+.job-company {
+  color: #8c8c8c;
+  font-size: 12px;
+}
+
+/* Location Cell */
+.location-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #595959;
+}
+
+.location-icon {
+  color: #8c8c8c;
+  font-size: 14px;
+}
+
+/* Salary Cell */
+.salary-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #52c41a;
+  font-weight: 500;
+}
+
+.salary-icon {
+  color: #52c41a;
+  font-size: 14px;
+}
+
+/* Deadline Cell */
+.deadline-cell {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.deadline-icon {
+  color: #faad14;
+  font-size: 14px;
+}
+
+/* Action Buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.view-btn {
+  color: #1890ff;
+  background: rgba(24, 144, 255, 0.1);
+}
+
+.view-btn:hover {
+  color: #40a9ff;
+  background: rgba(24, 144, 255, 0.2);
+}
+
+.edit-btn {
+  color: #faad14;
+  background: rgba(250, 173, 20, 0.1);
+}
+
+.edit-btn:hover {
+  color: #ffc53d;
+  background: rgba(250, 173, 20, 0.2);
+}
+
+.delete-btn {
+  color: #ff4d4f;
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.delete-btn:hover {
+  color: #ff7875;
+  background: rgba(255, 77, 79, 0.2);
+}
+
+/* Pagination */
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 0;
+}
+
+.job-pagination .ant-pagination-item {
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  margin: 0 4px;
+}
+
+.job-pagination .ant-pagination-item:hover {
+  border-color: #1890ff;
+}
+
+.job-pagination .ant-pagination-item-active {
+  background: #1890ff;
+  border-color: #1890ff;
+}
+
+.job-pagination .ant-pagination-item-active a {
+  color: white;
+}
+
+.job-pagination .ant-pagination-prev,
+.job-pagination .ant-pagination-next {
+  border-radius: 4px;
+  border: 1px solid #d9d9d9;
+  margin: 0 4px;
+}
+
+.job-pagination .ant-pagination-prev:hover,
+.job-pagination .ant-pagination-next:hover {
+  border-color: #1890ff;
+  color: #1890ff;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .job-list-container {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .job-list-container {
+    padding: 16px;
+  }
+  
+  .job-table .ant-table-thead > tr > th,
+  .job-table .ant-table-tbody > tr > td {
+    padding: 12px 8px;
+    font-size: 13px;
+  }
+  
+  .action-buttons {
+    gap: 4px;
+  }
+  
+  .action-btn {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (max-width: 480px) {
+  .job-list-container {
+    padding: 12px;
+  }
+  
+  .job-table .ant-table-thead > tr > th,
+  .job-table .ant-table-tbody > tr > td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+  
+  .action-btn {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .job-title-main {
+    font-size: 13px;
+  }
+  
+  .job-company {
+    font-size: 11px;
+  }
+}

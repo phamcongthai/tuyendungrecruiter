@@ -1,0 +1,4 @@
+/* Remove border only from wrapper sections (Cards); keep inner controls as-is */
+.job-create-form .ant-card { border: 0 !important; box-shadow: none !important; }
+.job-create-form .ant-card-body { border: 0 !important; box-shadow: none !important; }
+
