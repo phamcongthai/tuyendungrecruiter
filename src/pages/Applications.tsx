@@ -102,7 +102,7 @@ const ApplicationsPage: React.FC = () => {
       console.log(JSON.stringify(response, null, 2));
       setJobs((response.data || []).map((job: any) => ({
         ...job,
-        applicationCount: 0
+        applicationCount: job.applicationCount || 0
       })));
       setJobsTotal(response.total || 0);
     } catch (error: any) {
