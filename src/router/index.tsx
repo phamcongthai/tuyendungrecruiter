@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Home from '../pages/Home';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
@@ -44,6 +44,9 @@ const AppRouter: React.FC = () => {
           <Route path="/profile" element={<Profile />} />
           <Route path="/company" element={<Company />} />
           <Route path="/jobs" element={<Jobs />} />
+          <Route path="/jobs/create" element={<Jobs />} />
+          {/* Backward-compatible redirect for legacy draft route */}
+          <Route path="/jobs/draft" element={<Navigate to="/jobs?tab=draft" replace />} />
           <Route path="/applications" element={<ApplicationsPage />} />
         </Route>
       </Routes>

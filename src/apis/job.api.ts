@@ -37,7 +37,8 @@ export const fetchJobs = async (filters: JobFilters = {}): Promise<JobListRespon
       jobType,
       workingMode,
       companyId,
-      jobCategoryId
+      jobCategoryId,
+      recruiterId
     } = filters;
 
     const params: any = {
@@ -51,6 +52,7 @@ export const fetchJobs = async (filters: JobFilters = {}): Promise<JobListRespon
     if (workingMode) params.workingMode = workingMode;
     if (companyId) params.companyId = companyId;
     if (jobCategoryId) params.jobCategoryId = jobCategoryId;
+    if (recruiterId) params.recruiterId = recruiterId;
 
     // Use recruiter-specific endpoint
     const response = await axiosInstance.get('/recruiters/jobs', { params });

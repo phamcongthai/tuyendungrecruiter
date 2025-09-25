@@ -9,18 +9,20 @@ import {
   Typography, 
   Modal,
   Empty,
-  Spin
+  Spin,
+  Tabs
 } from 'antd';
 import {
   PlusOutlined
 } from '@ant-design/icons';
 import type { JobData, JobFilters as JobFiltersType } from '../types/job.type';
-import { fetchJobs, deleteJob } from '../apis/job.api';
+import { fetchJobs, deleteJob, updateJob } from '../apis/job.api';
 import JobCreateForm from '../components/JobCreateForm';
 import JobEditForm from '../components/JobEditForm';
 import JobDetail from '../components/JobDetail';
 import JobList from '../components/JobList';
 import './Jobs.css';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -36,11 +38,23 @@ const Jobs: React.FC = () => {
   const [editModalVisible, setEditModalVisible] = useState(false);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const mapTabToStatus = (tab: 'active' | 'expired' | 'draft'): 'active' | 'expired' | 'draft' => {
+    if (tab === 'active') return 'active';
+    if (tab === 'expired') return 'expired';
+    return 'draft';
+  };
+  const initialTab = (searchParams.get('tab') as 'active' | 'expired' | 'draft') || 'active';
+  const [activeTab, setActiveTab] = useState<'active' | 'expired' | 'draft'>(initialTab);
+
   // Filter states
   const [filters, setFilters] = useState<JobFiltersType>({
     page: 1,
     limit: 12,
     search: '',
+    status: mapTabToStatus(initialTab),
   });
 
   // Load jobs data
@@ -62,6 +76,17 @@ const Jobs: React.FC = () => {
     loadJobs();
   }, [filters]);
 
+  // Sync tab from URL -> state
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = (params.get('tab') as 'active' | 'expired' | 'draft') || 'active';
+    if (tab !== activeTab) {
+      setActiveTab(tab);
+      setFilters((prev) => ({ ...prev, status: mapTabToStatus(tab), page: 1 }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
 
   // Handle delete job
   const handleDeleteJob = async (id: string) => {
@@ -71,6 +96,16 @@ const Jobs: React.FC = () => {
       loadJobs();
     } catch (error: any) {
       message.error(error.message || 'Không thể xóa tin tuyển dụng');
+    }
+  };
+
+  const handlePublishJob = async (id: string) => {
+    try {
+      await updateJob(id, { status: 'active' } as any);
+      message.success('Đăng tin thành công');
+      loadJobs();
+    } catch (error: any) {
+      message.error(error.message || 'Không thể đăng tin');
     }
   };
 
@@ -140,6 +175,26 @@ const Jobs: React.FC = () => {
             </Col>
           </Row>
 
+          {/* Tabs for statuses */}
+          <div className="mb-4">
+            <Tabs
+              activeKey={activeTab}
+              onChange={(key) => {
+                const tab = key as 'active' | 'expired' | 'draft';
+                setActiveTab(tab);
+                setFilters((prev) => ({ ...prev, status: tab, page: 1 }));
+                const params = new URLSearchParams(location.search);
+                params.set('tab', tab);
+                navigate({ pathname: '/jobs', search: params.toString() }, { replace: true });
+              }}
+              items={[
+                { key: 'active', label: 'Đã đăng' },
+                { key: 'expired', label: 'Đã hết hạn' },
+                { key: 'draft', label: 'Tin nháp' },
+              ]}
+            />
+          </div>
+
           {/* Results count */}
           <div className="mb-4 flex justify-between items-center">
             <Text className="text-gray-600">
@@ -178,6 +233,7 @@ const Jobs: React.FC = () => {
                 onEditJob={showEditModal}
                 onViewJob={showDetailModal}
                 onDeleteJob={handleDeleteJob}
+                onPublishJob={handlePublishJob}
                 filters={filters}
                 onFiltersChange={setFilters}
               />

@@ -109,82 +109,7 @@ const Header: React.FC = () => {
     }
   };
 
-  const userMenu = (
-    <Menu 
-      style={{ 
-        borderRadius: 16, 
-        minWidth: 220,
-        border: 'none',
-        boxShadow: '0 10px 40px rgba(0, 0, 0, 0.15)',
-        padding: '8px 0'
-      }} 
-      onClick={handleMenuClick}
-    >
-      <Menu.Item 
-        key="profile" 
-        icon={<UserOutlined />}
-        style={{ 
-          borderRadius: 8, 
-          margin: '4px 8px',
-          padding: '12px 16px',
-          fontSize: '14px'
-        }}
-      >
-        Thông tin tài khoản
-      </Menu.Item>
-      <Menu.Item 
-        key="dashboard" 
-        icon={<DashboardOutlined />}
-        style={{ 
-          borderRadius: 8, 
-          margin: '4px 8px',
-          padding: '12px 16px',
-          fontSize: '14px'
-        }}
-      >
-        Bảng điều khiển
-      </Menu.Item>
-      <Menu.Item 
-        key="jobs" 
-        icon={<FileTextOutlined />}
-        style={{ 
-          borderRadius: 8, 
-          margin: '4px 8px',
-          padding: '12px 16px',
-          fontSize: '14px'
-        }}
-      >
-        Quản lý tin tuyển dụng
-      </Menu.Item>
-      <Menu.Item 
-        key="settings" 
-        icon={<SettingOutlined />}
-        style={{ 
-          borderRadius: 8, 
-          margin: '4px 8px',
-          padding: '12px 16px',
-          fontSize: '14px'
-        }}
-      >
-        Cài đặt
-      </Menu.Item>
-      <Menu.Divider style={{ margin: '8px 0' }} />
-      <Menu.Item 
-        key="logout" 
-        icon={<LogoutOutlined />} 
-        onClick={handleLogout}
-        style={{ 
-          borderRadius: 8, 
-          margin: '4px 8px',
-          padding: '12px 16px',
-          fontSize: '14px',
-          color: '#ef4444'
-        }}
-      >
-        Đăng xuất
-      </Menu.Item>
-    </Menu>
-  );
+  const userMenu = null;
 
   const getAvatarText = (name: string) => {
     return name ? name.charAt(0).toUpperCase() : 'U';
@@ -225,7 +150,21 @@ const Header: React.FC = () => {
         <NotificationIcon />
         
         {/* User Profile */}
-        <Dropdown overlay={userMenu} trigger={['click']} placement="bottomRight">
+        <Dropdown 
+          menu={{ 
+            items: [
+              { key: 'profile', label: 'Thông tin tài khoản', icon: <UserOutlined /> },
+              { key: 'dashboard', label: 'Bảng điều khiển', icon: <DashboardOutlined /> },
+              { key: 'jobs', label: 'Quản lý tin tuyển dụng', icon: <FileTextOutlined /> },
+              { key: 'settings', label: 'Cài đặt', icon: <SettingOutlined /> },
+              { type: 'divider' },
+              { key: 'logout', label: 'Đăng xuất', icon: <LogoutOutlined />, danger: true },
+            ],
+            onClick: ({ key }) => handleMenuClick({ key } as any),
+          }} 
+          trigger={['click']} 
+          placement="bottomRight"
+        >
           <div className="user-profile">
             <div style={{ position: 'relative' }}>
               {profileData?.avatar ? (

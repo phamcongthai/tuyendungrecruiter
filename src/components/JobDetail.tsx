@@ -120,7 +120,7 @@ const JobDetail: React.FC<JobDetailProps> = ({
       setActionLoading(true);
       const response = await toggleJobStatus(jobId);
       setJob(response.data!);
-      message.success(`Job ${job.isActive ? 'deactivated' : 'activated'} successfully`);
+      message.success('Cập nhật trạng thái công việc thành công');
     } catch (error: any) {
       message.error(error.message || 'Failed to update job status');
     } finally {
@@ -147,9 +147,10 @@ const JobDetail: React.FC<JobDetailProps> = ({
     );
   }
 
-  const isExpired = job.deadline && new Date(job.deadline) < new Date();
-  const daysUntilDeadline = job.deadline 
-    ? Math.ceil((new Date(job.deadline).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+  const deadlineISO = job.deadline;
+  const isExpired = deadlineISO && new Date(deadlineISO) < new Date();
+  const daysUntilDeadline = deadlineISO 
+    ? Math.ceil((new Date(deadlineISO).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
     : null;
 
   return (
@@ -187,8 +188,8 @@ const JobDetail: React.FC<JobDetailProps> = ({
             </div>
             <div className="flex gap-3">
               <Badge 
-                status={job.isActive ? 'success' : 'error'} 
-                text={job.isActive ? 'Đang tuyển' : 'Tạm dừng'}
+                status={((job as any).status === 'active') ? 'success' : ((job as any).status === 'expired' ? 'error' : 'default')} 
+                text={((job as any).status === 'active') ? 'Đang tuyển' : ((job as any).status === 'expired' ? 'Hết hạn' : 'Nháp/Tạm dừng')}
                 className="text-white"
               />
             </div>
@@ -358,12 +359,12 @@ const JobDetail: React.FC<JobDetailProps> = ({
                   <div className="flex gap-3">
                     <Button
                       type="default"
-                      icon={job.isActive ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
+                      icon={(job as any).status === 'active' ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
                       onClick={handleToggleStatus}
                       loading={actionLoading}
                       className="flex-1"
                     >
-                      {job.isActive ? 'Tạm dừng' : 'Kích hoạt'}
+                      {(job as any).status === 'active' ? 'Tạm dừng' : 'Kích hoạt'}
                     </Button>
                   </div>
                 </div>
@@ -404,7 +405,7 @@ const JobDetail: React.FC<JobDetailProps> = ({
               )}
 
               {/* Deadline Card */}
-              {job.deadline && (
+              {deadlineISO && (
                 <div className="bg-white p-6 rounded-lg">
                   <Title level={5} className="text-gray-800 mb-4">
                     <CalendarOutlined className="mr-2 text-blue-500" />
@@ -413,7 +414,7 @@ const JobDetail: React.FC<JobDetailProps> = ({
                   <div className="space-y-4">
                     <div className="text-center">
                       <Text className="text-xl font-bold text-gray-800">
-                        {dayjs(job.deadline).format('DD/MM/YYYY')}
+                        {dayjs(deadlineISO).format('DD/MM/YYYY')}
                       </Text>
                     </div>
                     {daysUntilDeadline !== null && (

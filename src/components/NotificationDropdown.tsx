@@ -81,50 +81,33 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
     }
   };
 
+  const sortedNotifications = React.useMemo(() => {
+    return [...notifications].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [notifications]);
+
   const dropdownContent = (
     <div 
       className="notification-dropdown-content"
       style={{ 
-        width: '400px', 
-        maxHeight: '500px', 
+        width: '360px', 
+        maxHeight: '480px', 
         overflow: 'hidden',
         background: 'white',
         borderRadius: '8px',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
       }}>
       {/* Header */}
-      <div style={{ 
-        padding: '16px', 
-        borderBottom: '1px solid #f0f0f0',
-        display: 'flex', 
-        justifyContent: 'space-between', 
-        alignItems: 'center',
-        background: '#fafafa',
-        borderRadius: '8px 8px 0 0'
-      }}>
-        <span style={{ fontWeight: 'bold', fontSize: '16px' }}>
-          Thông báo {unreadCount > 0 && `(${unreadCount} chưa đọc)`}
-        </span>
-        <Space>
-          <Tooltip title="Làm mới">
-            <Button 
-              type="text" 
-              icon={<ReloadOutlined />} 
-              onClick={handleRefresh}
-              loading={isLoading}
-              size="small"
-            />
-          </Tooltip>
-          {unreadCount > 0 && (
-            <Button 
-              type="primary" 
-              size="small"
-              onClick={handleMarkAllAsRead}
-            >
-              Đánh dấu tất cả đã đọc
-            </Button>
-          )}
-        </Space>
+      <div style={{ padding: '12px 16px', borderBottom: '1px solid #f0f0f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', borderRadius: '8px 8px 0 0' }}>
+        <span style={{ fontWeight: 700, fontSize: 14 }}>Thông báo {unreadCount > 0 ? `(${unreadCount})` : ''}</span>
+        {unreadCount > 0 ? (
+          <Button type="link" size="small" onClick={handleMarkAllAsRead} style={{ padding: 0 }}>
+            Đánh dấu tất cả đã đọc
+          </Button>
+        ) : (
+          <Button type="link" size="small" onClick={handleRefresh} style={{ padding: 0 }}>
+            Làm mới
+          </Button>
+        )}
       </div>
 
       {/* Content */}
@@ -142,7 +125,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
           }}>
             <Spin size="large" />
           </div>
-        ) : notifications.length === 0 ? (
+        ) : sortedNotifications.length === 0 ? (
           <Empty 
             description="Không có thông báo nào"
             image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -154,23 +137,17 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
           </Empty>
         ) : (
           <List
-            dataSource={notifications}
+            dataSource={sortedNotifications}
             renderItem={(notification) => (
               <List.Item
                 key={notification._id}
                 style={{
-                  padding: '12px 16px',
-                  backgroundColor: notification.isRead ? '#fff' : '#f6ffed',
-                  borderLeft: notification.isRead ? 'none' : '3px solid #52c41a',
+                  padding: '10px 14px',
+                  backgroundColor: '#fff',
+                  borderLeft: notification.isRead ? '3px solid transparent' : '3px solid #52c41a',
                   cursor: 'pointer',
-                  transition: 'all 0.2s',
-                  borderBottom: '1px solid #f0f0f0'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = notification.isRead ? '#f5f5f5' : '#e6f7ff';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = notification.isRead ? '#fff' : '#f6ffed';
+                  transition: 'background-color 0.2s',
+                  borderBottom: '1px solid #f5f5f5'
                 }}
                 onClick={async () => {
                   // Nếu là thông báo đơn ứng tuyển, điều hướng tới trang ứng viên
@@ -186,7 +163,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
                 }}
                 actions={[
                   !notification.isRead && (
-                    <Tooltip title="Đánh dấu đã đọc">
+                    <Tooltip title="Đánh dấu đã đọc" key="read">
                       <Button
                         type="text"
                         icon={<CheckCircleOutlined />}
@@ -198,7 +175,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
                       />
                     </Tooltip>
                   ),
-                  <Tooltip title="Xóa">
+                  <Tooltip title="Xóa" key="del">
                     <Button
                       type="text"
                       icon={<DeleteOutlined />}
@@ -244,7 +221,7 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
                     <Paragraph
                       style={{ 
                         margin: 0,
-                        color: notification.isRead ? '#666' : '#000',
+                        color: '#444',
                         fontSize: '13px',
                         lineHeight: '1.4'
                       }}

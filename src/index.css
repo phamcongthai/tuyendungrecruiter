@@ -88,17 +88,21 @@ body {
 }
 
 .ant-card {
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border: none !important;
   border-radius: 16px !important;
   background: rgba(255, 255, 255, 0.95) !important;
   backdrop-filter: blur(20px) !important;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: none !important;
   transition: all 0.3s ease !important;
 }
 
+/* Ensure bordered variant also has no border */
+.ant-card-bordered {
+  border: none !important;
+}
+
 .ant-card:hover {
-  border-color: rgba(8, 221, 99, 0.5) !important;
-  box-shadow: 0 20px 60px rgba(5, 24, 44, 0.15) !important;
+  box-shadow: none !important;
 }
 
 /* Job Edit Form specific styles - Remove borders and sync background */

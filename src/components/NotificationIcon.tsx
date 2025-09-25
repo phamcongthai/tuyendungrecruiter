@@ -25,16 +25,12 @@ const NotificationIcon: React.FC = () => {
   return (
     <Tooltip title={isConnected ? "Thông báo" : "Đang kết nối..."}>
       <Dropdown
-        overlay={<NotificationDropdown onRefresh={handleRefresh} />}
+        menu={{ items: [{ key: 'panel', label: <NotificationDropdown onRefresh={handleRefresh} /> }] }}
         trigger={['click']}
         placement="bottomRight"
         open={isDropdownVisible}
         onOpenChange={handleDropdownVisibleChange}
         overlayClassName="notification-dropdown"
-        overlayStyle={{
-          padding: 0,
-          margin: 0,
-        }}
       >
         <Button
           type="text"

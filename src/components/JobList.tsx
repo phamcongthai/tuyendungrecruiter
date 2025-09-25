@@ -26,6 +26,7 @@ interface JobListProps {
   onEditJob: (job: JobData) => void;
   onViewJob: (job: JobData) => void;
   onDeleteJob: (jobId: string) => void;
+  onPublishJob?: (jobId: string) => void;
   filters: JobFiltersType;
   onFiltersChange: (filters: JobFiltersType) => void;
 }
@@ -34,6 +35,7 @@ const JobList: React.FC<JobListProps> = ({
   onEditJob, 
   onViewJob, 
   onDeleteJob, 
+  onPublishJob,
   filters,
   onFiltersChange 
 }) => {
@@ -82,9 +84,9 @@ const JobList: React.FC<JobListProps> = ({
 
   // Get deadline info
   const getDeadlineInfo = (job: JobData) => {
-    if (!job.deadline) return { text: '-', color: 'default' };
-    
-    const deadline = new Date(job.deadline);
+    const deadlineISO = job.deadline as any;
+    if (!deadlineISO) return { text: '-', color: 'default' };
+    const deadline = new Date(deadlineISO);
     const now = new Date();
     const diffTime = deadline.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -164,14 +166,18 @@ const JobList: React.FC<JobListProps> = ({
     },
     {
       title: 'Trạng thái',
-      dataIndex: 'isActive',
-      key: 'isActive',
-      render: (isActive: boolean) => (
-        <Badge 
-          status={isActive ? 'success' : 'default'} 
-          text={isActive ? 'Hoạt động' : 'Tạm dừng'}
-        />
-      ),
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => {
+        const s = (status || 'draft') as string;
+        const map: any = {
+          draft: { text: 'Nháp', status: 'default' },
+          active: { text: 'Hoạt động', status: 'success' },
+          expired: { text: 'Hết hạn', status: 'error' },
+        };
+        const cfg = map[s] || map.draft;
+        return <Badge status={cfg.status} text={cfg.text} />;
+      },
     },
     {
       title: 'Hành động',
@@ -195,6 +201,16 @@ const JobList: React.FC<JobListProps> = ({
             size="small"
             title="Chỉnh sửa"
           />
+          {filters.status === 'draft' && (
+            <Button
+              type="text"
+              onClick={() => record._id && onPublishJob && onPublishJob(record._id)}
+              className="action-btn"
+              size="small"
+            >
+              Đăng tin
+            </Button>
+          )}
           <Popconfirm
             title="Xóa tin tuyển dụng"
             description="Bạn có chắc chắn muốn xóa tin tuyển dụng này?"

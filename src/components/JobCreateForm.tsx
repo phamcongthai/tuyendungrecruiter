@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Form, Input, Select, InputNumber, DatePicker, Switch, Button, Row, Col, Typography, message, Space, Card } from 'antd';
+import { Form, Input, Select, InputNumber, DatePicker, Button, Row, Col, Typography, message, Space, Card } from 'antd';
 import { SaveOutlined, CloseOutlined, PlusOutlined, EnvironmentOutlined } from '@ant-design/icons';
 import type { CreateJobData } from '../types/job.type';
 import { JobType, WorkingMode, JOB_TYPE_LABELS, WORKING_MODE_LABELS } from '../types/job.type';
@@ -42,7 +42,8 @@ const JobCreateForm: React.FC<JobCreateFormProps> = ({ onSuccess, onCancel }) =>
       const payload: CreateJobData = {
         ...values,
         skills: filteredSkills.length ? filteredSkills : undefined,
-        deadline: values.deadline ? dayjs(values.deadline).toISOString() : undefined,
+        deadline: values.expiresAt ? dayjs(values.expiresAt).toISOString() : undefined,
+        status: values.status || 'draft',
       };
       await createJob(payload);
       message.success('Tạo tin tuyển dụng thành công!');
@@ -67,7 +68,7 @@ const JobCreateForm: React.FC<JobCreateFormProps> = ({ onSuccess, onCancel }) =>
           layout="vertical"
           onFinish={handleSubmit}
           initialValues={{
-            isActive: true,
+            status: 'draft',
             jobType: JobType.FULLTIME,
             workingMode: WorkingMode.ONSITE,
             currency: 'VND',
@@ -154,13 +155,16 @@ const JobCreateForm: React.FC<JobCreateFormProps> = ({ onSuccess, onCancel }) =>
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
-                <Form.Item name="deadline" label={<Text strong>Hạn nộp hồ sơ</Text>}>
+                <Form.Item name="expiresAt" label={<Text strong>Hạn nộp hồ sơ</Text>}>
                   <DatePicker className="w-full" size="large" format="DD/MM/YYYY" placeholder="Chọn ngày" />
                 </Form.Item>
               </Col>
               <Col xs={24} md={12}>
-                <Form.Item name="isActive" label={<Text strong>Trạng thái</Text>} valuePropName="checked">
-                  <Switch checkedChildren="Hoạt động" unCheckedChildren="Tạm dừng" />
+                <Form.Item name="status" label={<Text strong>Trạng thái</Text>} initialValue={'draft'}>
+                  <Select size="large">
+                    <Option value="draft">Nháp</Option>
+                    <Option value="active">Đăng ngay</Option>
+                  </Select>
                 </Form.Item>
               </Col>
             </Row>
@@ -206,7 +210,7 @@ const JobCreateForm: React.FC<JobCreateFormProps> = ({ onSuccess, onCancel }) =>
                 <Button onClick={onCancel} size="large">Hủy</Button>
               </Col>
               <Col>
-                <Button type="primary" htmlType="submit" icon={<SaveOutlined />} loading={loading} size="large">Tạo tin tuyển dụng</Button>
+                <Button type="primary" onClick={() => form.submit()} icon={<SaveOutlined />} loading={loading} size="large">Lưu</Button>
               </Col>
             </Row>
           </Card>

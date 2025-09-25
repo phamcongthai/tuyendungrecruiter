@@ -112,8 +112,8 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
         currency: job.currency || 'VND',
         salaryMin: job.salaryMin,
         salaryMax: job.salaryMax,
-        deadline: job.deadline ? dayjs(job.deadline) : null,
-        isActive: job.isActive,
+        expiresAt: job.deadline ? dayjs(job.deadline) : null,
+        status: (job as any).status || 'draft',
         jobCategoryId: job.jobCategoryId,
         recruiterId: job.recruiterId,
         companyId: job.companyId,
@@ -164,14 +164,15 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
       const updateData: UpdateJobData = {
         ...values,
         skills: filteredSkills.length > 0 ? filteredSkills : undefined,
-        deadline: values.deadline
-          ? (values.deadline instanceof Date
-              ? values.deadline.toISOString()
-              : new Date(values.deadline).toISOString())
+        deadline: (values as any).expiresAt
+          ? ((values as any).expiresAt instanceof Date
+              ? (values as any).expiresAt.toISOString()
+              : new Date((values as any).expiresAt).toISOString())
           : undefined,
-        recruiterId: values.recruiterId,
-        companyId: values.companyId,
-        deleted: values.deleted,
+        status: (values as any).status,
+        recruiterId: (values as any).recruiterId,
+        companyId: (values as any).companyId,
+        deleted: (values as any).deleted,
       };
 
       await updateJob(jobId, updateData);
@@ -442,12 +443,12 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
 
               <Col xs={24} md={12}>
                 <Form.Item 
-                  name="deadline" 
+                  name="expiresAt" 
                   label={<Text strong>Hạn nộp hồ sơ</Text>}
                 >
                   <DatePicker
                     className="w-full rounded-lg"
-                    placeholder="Select deadline"
+                    placeholder="Chọn hạn nộp"
                     disabledDate={(current) => current && current < dayjs().startOf('day')}
                     size="large"
                     format="DD/MM/YYYY"
@@ -457,15 +458,14 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
 
               <Col xs={24} md={12}>
                 <Form.Item 
-                  name="isActive" 
-                  label={<Text strong>Trạng thái</Text>} 
-                  valuePropName="checked"
+                  name="status" 
+                  label={<Text strong>Trạng thái</Text>}
                 >
-                  <Switch
-                    checkedChildren="Active"
-                    unCheckedChildren="Inactive"
-                    className="bg-green-500"
-                  />
+                  <Select size="large">
+                    <Option value="draft">Nháp</Option>
+                    <Option value="active">Đã đăng</Option>
+                    <Option value="expired">Hết hạn</Option>
+                  </Select>
                 </Form.Item>
               </Col>
             </Row>

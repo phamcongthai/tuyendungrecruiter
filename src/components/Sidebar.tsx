@@ -46,12 +46,6 @@ const Sidebar: React.FC = () => {
           icon: <FileTextOutlined />,
           label: 'Tin tuyển dụng',
         },
-        {
-          key: '/jobs/draft',
-          icon: <FolderOutlined />,
-          label: 'Tin nháp',
-          badge: '2'
-        }
       ]
     },
     {

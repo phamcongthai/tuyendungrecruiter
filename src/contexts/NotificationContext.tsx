@@ -24,12 +24,11 @@ interface NotificationProviderProps {
 
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [, setSocket] = useState<Socket | null>(null);
   const { user } = useUser();
-
-  const unreadCount = notifications.filter(n => !n.isRead).length;
 
   // Khởi tạo Socket.IO connection
   useEffect(() => {
@@ -42,9 +41,9 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       newSocket.on('connect', async () => {
         console.log('Connected to notifications socket');
         setIsConnected(true);
-        // Join room với recruiterId (user.id trong recruiter app là recruiterId)
-        console.log('Joining room with recruiterId:', user.id);
-        newSocket.emit('joinRoom', user.id);
+        // Join với sự kiện recruiterJoin để kích hoạt đồng bộ unreadCount từ server
+        console.log('Joining as recruiter with recruiterId:', user.id);
+        newSocket.emit('recruiterJoin', { recruiterId: user.id });
         // Load thông báo ban đầu ngay khi kết nối thành công
         try {
           await refreshNotifications();
@@ -60,8 +59,15 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
       newSocket.on('newNotification', (notification: Notification) => {
         console.log('Received new notification:', notification);
-        // Cập nhật ngay lập tức danh sách để badge hiển thị realtime
+        // Đảm bảo thêm vào đầu danh sách và tăng badge ngay lập tức
         setNotifications(prev => [notification, ...prev]);
+        setUnreadCount(prev => prev + 1);
+      });
+
+      // Nhận unreadCount realtime từ server khi vừa join hoặc khi server gửi cập nhật
+      newSocket.on('unreadCount', (data: { unreadCount: number }) => {
+        console.log('Unread count update:', data);
+        setUnreadCount(data.unreadCount || 0);
       });
 
       newSocket.on('joinedRoom', (data) => {
@@ -82,6 +88,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       refreshNotifications();
     } else {
       setNotifications([]);
+      setUnreadCount(0);
     }
   }, [user?.id]);
 
@@ -102,10 +109,13 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     try {
       const data = await notificationsApi.getNotifications(user.id);
       setNotifications(data);
+      // Cập nhật lại badge dựa trên dữ liệu mới nhất từ API
+      setUnreadCount(data.filter(n => !n.isRead).length);
     } catch (error) {
       console.error('Error loading notifications:', error);
       // Nếu không có thông báo, set empty array
       setNotifications([]);
+      setUnreadCount(0);
     } finally {
       setIsLoading(false);
     }
@@ -119,6 +129,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
           n._id === notificationId ? { ...n, isRead: true, readAt: new Date().toISOString() } : n
         )
       );
+      setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
@@ -132,6 +143,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       setNotifications(prev =>
         prev.map(n => ({ ...n, isRead: true, readAt: new Date().toISOString() }))
       );
+      setUnreadCount(0);
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
     }
@@ -141,6 +153,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
     try {
       await notificationsApi.deleteNotification(notificationId);
       setNotifications(prev => prev.filter(n => n._id !== notificationId));
+      // Nếu xoá một thông báo chưa đọc, giảm badge
+      const target = notifications.find(n => n._id === notificationId);
+      if (target && !target.isRead) {
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      }
     } catch (error) {
       console.error('Error deleting notification:', error);
     }

@@ -38,7 +38,7 @@ export interface JobData {
   salaryMax?: number;
   currency?: string;
   deadline?: Date | string;
-  isActive: boolean;
+  status: 'draft' | 'active' | 'expired';
   recruiterId: string;
   companyId: string;
   jobCategoryId?: string;
@@ -74,7 +74,7 @@ export interface CreateJobData {
   salaryMax?: number;
   currency?: string;
   deadline?: Date | string;
-  isActive?: boolean;
+  status?: 'draft' | 'active' | 'expired';
   recruiterId?: string;
   companyId?: string;
   jobCategoryId?: string;
@@ -93,7 +93,7 @@ export interface UpdateJobData {
   salaryMax?: number;
   currency?: string;
   deadline?: Date | string;
-  isActive?: boolean;
+  status?: 'draft' | 'active' | 'expired';
   recruiterId?: string;
   companyId?: string;
   jobCategoryId?: string;

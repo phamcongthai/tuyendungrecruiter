@@ -21,7 +21,7 @@ function ProtectedRouteContent({ children, requiredRole }: ProtectedRouteProps) 
         height: '100vh',
         backgroundColor: '#FFFFFF'
       }}>
-        <Spin size="large" tip="Đang kiểm tra quyền truy cập..." />
+        <Spin size="large" />
       </div>
     );
   }
