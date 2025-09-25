@@ -122,6 +122,7 @@ export interface JobFilters {
   workingMode?: WorkingMode;
   companyId?: string;
   jobCategoryId?: string;
+  recruiterId?: string;
 }
 
 // Utility types for form handling

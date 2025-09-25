@@ -7,7 +7,6 @@ import {
   SettingOutlined,
   BellOutlined,
   TeamOutlined,
-  FolderOutlined,
   StarOutlined,
   BankOutlined
 } from '@ant-design/icons';

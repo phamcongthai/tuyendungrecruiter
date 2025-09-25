@@ -1,15 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { List, Avatar, Typography, Button, Space, Empty, Spin, Tooltip } from 'antd';
-import { 
-  CheckCircleOutlined, 
-  DeleteOutlined, 
-  ReloadOutlined,
-  FileTextOutlined,
-  SettingOutlined,
-  MessageOutlined,
-  InfoCircleOutlined
-} from '@ant-design/icons';
+import { List, Avatar, Typography, Button, Empty, Spin, Tooltip } from 'antd';
+import { CheckCircleOutlined, DeleteOutlined, FileTextOutlined, SettingOutlined, MessageOutlined, InfoCircleOutlined } from '@ant-design/icons';
 import { useNotifications } from '../contexts/NotificationContext';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
