@@ -67,6 +67,9 @@ const Header: React.FC = () => {
       case 'settings':
         navigate('/settings');
         break;
+      case 'logout':
+        handleLogout();
+        break;
       default:
         break;
     }
@@ -109,7 +112,7 @@ const Header: React.FC = () => {
     }
   };
 
-  const userMenu = null;
+  
 
   const getAvatarText = (name: string) => {
     return name ? name.charAt(0).toUpperCase() : 'U';
