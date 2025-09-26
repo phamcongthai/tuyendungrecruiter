@@ -29,6 +29,7 @@ import type { JobData } from '../types/job.type';
 import { JOB_TYPE_LABELS, WORKING_MODE_LABELS } from '../types/job.type';
 import { formatCurrency } from '../utils/currency';
 import dayjs from 'dayjs';
+import { StarFilled, StarOutlined } from '@ant-design/icons';
 
 const { Title, Text } = Typography;
 
@@ -57,7 +58,7 @@ interface ApplicationWithUser {
     email?: string;
     phone?: string;
   } | null;
-  status: 'pending' | 'accepted' | 'rejected' | 'withdrawn';
+  status: 'pending' | 'viewed' | 'shortlisted' | 'accepted' | 'rejected' | 'withdrawn';
   note?: string;
   coverLetter?: string;
   createdAt: string;
@@ -278,6 +279,9 @@ const ApplicationsPage: React.FC = () => {
               <div style={{ fontSize: 12, color: '#666' }}>
                 {email !== 'N/A' ? email : '—'}
               </div>
+              {record.status === 'viewed' && (
+                <Tag color="gold" style={{ marginTop: 4 }}>Đã xem</Tag>
+              )}
             </div>
           </div>
         );
@@ -300,6 +304,8 @@ const ApplicationsPage: React.FC = () => {
       render: (status: string) => {
         const statusConfig = {
           pending: { color: 'blue', icon: <ClockCircleOutlined />, text: 'Chờ xử lý' },
+          viewed: { color: 'gold', icon: <EyeOutlined />, text: 'Đã xem' },
+          shortlisted: { color: 'green', icon: <CheckCircleOutlined />, text: 'Quan tâm' },
           accepted: { color: 'green', icon: <CheckCircleOutlined />, text: 'Đã chấp nhận' },
           rejected: { color: 'red', icon: <CloseCircleOutlined />, text: 'Đã từ chối' },
           withdrawn: { color: 'default', icon: <MinusCircleOutlined />, text: 'Đã rút hồ sơ' },
@@ -326,9 +332,17 @@ const ApplicationsPage: React.FC = () => {
           <Button
             type="link"
             icon={<EyeOutlined />}
-            onClick={() => {
+            onClick={async () => {
               setSelectedApplication(record);
               setDetailModalVisible(true);
+              if (record.status === 'pending') {
+                try {
+                  await applicationsAPI.updateStatus(record._id, 'viewed');
+                  loadApplications();
+                } catch (e: any) {
+                  // ignore error silently
+                }
+              }
             }}
           >
             Chi tiết
@@ -336,13 +350,32 @@ const ApplicationsPage: React.FC = () => {
           <Button
             type="link"
             icon={<FileTextOutlined />}
-            onClick={() => {
+            onClick={async () => {
               const accountId = record.accountId;
               const userName = record.account?.fullName || 'Ứng viên';
               handleViewCV(accountId, userName);
+              if (record.status === 'pending') {
+                try {
+                  await applicationsAPI.updateStatus(record._id, 'viewed');
+                  loadApplications();
+                } catch {}
+              }
             }}
           >
             Xem CV
+          </Button>
+          <Button
+            type={record.status === 'shortlisted' ? 'primary' : 'default'}
+            icon={record.status === 'shortlisted' ? <StarFilled style={{ color: '#faad14' }} /> : <StarOutlined />}
+            onClick={async () => {
+              try {
+                const next = record.status === 'shortlisted' ? 'pending' : 'shortlisted';
+                await applicationsAPI.updateStatus(record._id, next);
+                loadApplications();
+              } catch {}
+            }}
+          >
+            Quan tâm
           </Button>
         </div>
       ),
@@ -363,6 +396,8 @@ const ApplicationsPage: React.FC = () => {
       case 'accepted': return 'Đã chấp nhận';
       case 'rejected': return 'Đã từ chối';
       case 'withdrawn': return 'Đã rút hồ sơ';
+      case 'viewed': return 'Đã xem';
+      case 'shortlisted': return 'Quan tâm';
       default: return 'Chờ xử lý';
     }
   };

@@ -323,279 +323,284 @@ const Profile: React.FC = () => {
             )}
           </div>
 
-          {/* Unified Avatar + Info */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', marginBottom: '24px' }}>
-            <div 
-              className="avatar-upload-container"
-              style={{ marginBottom: '6px' }}
-              onClick={triggerFileSelect}
-            >
-              {(previewUrl || avatarUrl) ? (
-                <div style={{ position: 'relative' }}>
-                  <Image
-                    src={previewUrl || avatarUrl}
-                    alt={previewUrl ? "Preview" : "Current Avatar"}
-                    width={150}
-                    height={150}
-                    style={{ 
-                      borderRadius: '50%', 
-                      objectFit: 'cover',
-                      border: previewUrl ? '4px solid #fbbf24' : '4px solid #00B14F'
-                    }}
-                    preview={!previewUrl ? {
-                      mask: <EyeOutlined style={{ fontSize: '20px' }} />
-                    } : false}
-                  />
-                  <div className="avatar-upload-overlay">
-                    <CameraOutlined style={{ fontSize: '24px', color: 'white' }} />
-                  </div>
-                  {previewUrl && (
-                    <>
-                      <div style={{
-                        position: 'absolute',
-                        top: -10,
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        background: '#fbbf24',
-                        color: 'white',
-                        padding: '2px 8px',
-                        borderRadius: '12px',
-                        fontSize: '12px',
-                        fontWeight: 600
-                      }}>
-                        Xem trước
-                      </div>
-                      <Button
-                        type="text"
-                        danger
-                        size="small"
-                        icon={<DeleteOutlined />}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemovePreview();
+          {/* Bố cục: Avatar trái, thông tin phải */}
+          <Row gutter={[24, 24]} align="top">
+            <Col xs={24} md={8}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
+                <div 
+                  className="avatar-upload-container"
+                  style={{ marginBottom: '6px' }}
+                  onClick={triggerFileSelect}
+                >
+                  {(previewUrl || avatarUrl) ? (
+                    <div style={{ position: 'relative' }}>
+                      <Image
+                        src={previewUrl || avatarUrl}
+                        alt={previewUrl ? "Preview" : "Current Avatar"}
+                        width={150}
+                        height={150}
+                        style={{ 
+                          borderRadius: '50%', 
+                          objectFit: 'cover',
+                          border: previewUrl ? '4px solid #fbbf24' : '4px solid #00B14F'
                         }}
-                        style={{
-                          position: 'absolute',
-                          top: -5,
-                          right: -5,
-                          borderRadius: '50%',
-                          width: 28,
-                          height: 28,
-                          padding: 0,
-                          background: '#fff',
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-                          zIndex: 10
-                        }}
+                        preview={!previewUrl ? {
+                          mask: <EyeOutlined style={{ fontSize: '20px' }} />
+                        } : false}
                       />
-                    </>
+                      <div className="avatar-upload-overlay">
+                        <CameraOutlined style={{ fontSize: '24px', color: 'white' }} />
+                      </div>
+                      {previewUrl && (
+                        <>
+                          <div style={{
+                            position: 'absolute',
+                            top: -10,
+                            left: '50%',
+                            transform: 'translateX(-50%)',
+                            background: '#fbbf24',
+                            color: 'white',
+                            padding: '2px 8px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: 600
+                          }}>
+                            Xem trước
+                          </div>
+                          <Button
+                            type="text"
+                            danger
+                            size="small"
+                            icon={<DeleteOutlined />}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemovePreview();
+                            }}
+                            style={{
+                              position: 'absolute',
+                              top: -5,
+                              right: -5,
+                              borderRadius: '50%',
+                              width: 28,
+                              height: 28,
+                              padding: 0,
+                              background: '#fff',
+                              boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                              zIndex: 10
+                            }}
+                          />
+                        </>
+                      )}
+                    </div>
+                  ) : (
+                    <div style={{
+                      width: 150,
+                      height: 150,
+                      borderRadius: '50%',
+                      backgroundColor: '#e2e8f0',
+                      border: '2px dashed #cbd5e1',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexDirection: 'column',
+                      gap: '8px',
+                      color: '#64748b',
+                      transition: 'all 0.3s'
+                    }}>
+                      <CameraOutlined style={{ fontSize: '32px' }} />
+                      <small style={{ fontSize: '12px', textAlign: 'center' }}>
+                        Nhấp để chọn ảnh
+                      </small>
+                    </div>
                   )}
                 </div>
-              ) : (
-                <div style={{
-                  width: 150,
-                  height: 150,
-                  borderRadius: '50%',
-                  backgroundColor: '#e2e8f0',
-                  border: '2px dashed #cbd5e1',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                  gap: '8px',
-                  color: '#64748b',
-                  transition: 'all 0.3s'
-                }}>
-                  <CameraOutlined style={{ fontSize: '32px' }} />
-                  <small style={{ fontSize: '12px', textAlign: 'center' }}>
-                    Nhấp để chọn ảnh
+                <Space direction="vertical" style={{ width: '100%', maxWidth: 420 }}>
+                  <Button 
+                    type="primary"
+                    icon={<CameraOutlined />}
+                    onClick={triggerFileSelect}
+                    block
+                    style={{ marginBottom: '8px' }}
+                  >
+                    {avatarUrl ? 'Thay đổi ảnh' : 'Chọn ảnh'}
+                  </Button>
+                  {selectedFile && (
+                    <Button 
+                      type="default"
+                      icon={<SaveOutlined />}
+                      onClick={handleUploadAvatar}
+                      loading={uploadLoading}
+                      block
+                      style={{ background: '#00B14F', color: 'white', border: 'none' }}
+                    >
+                      Lưu ảnh đại diện
+                    </Button>
+                  )}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                  />
+                  <small style={{ color: '#64748b', display: 'block', marginTop: '4px' }}>
+                    Định dạng: JPG, PNG, WEBP · Tối đa: 5MB · Khuyến nghị: 300x300px
                   </small>
-                </div>
-              )}
-            </div>
-            <Space direction="vertical" style={{ width: '100%', maxWidth: 420 }}>
-              <Button 
-                type="primary"
-                icon={<CameraOutlined />}
-                onClick={triggerFileSelect}
-                block
-                style={{ marginBottom: '8px' }}
-              >
-                {avatarUrl ? 'Thay đổi ảnh' : 'Chọn ảnh'}
-              </Button>
-              {selectedFile && (
-                <Button 
-                  type="default"
-                  icon={<SaveOutlined />}
-                  onClick={handleUploadAvatar}
-                  loading={uploadLoading}
-                  block
-                  style={{ background: '#00B14F', color: 'white', border: 'none' }}
-                >
-                  Lưu ảnh đại diện
-                </Button>
-              )}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileSelect}
-                ref={fileInputRef}
-                style={{ display: 'none' }}
-              />
-              <small style={{ color: '#64748b', display: 'block', marginTop: '4px' }}>
-                Định dạng: JPG, PNG, WEBP · Tối đa: 5MB · Khuyến nghị: 300x300px
-              </small>
-            </Space>
-          </div>
+                </Space>
+              </div>
+            </Col>
+            <Col xs={24} md={16}>
+              {/* Thông tin tài khoản (chỉ đọc) */}
+              <Row gutter={[16, 16]} style={{ marginBottom: '8px' }}>
+                <Col xs={24} md={12}>
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={{ fontWeight: 600, color: '#374151', display: 'block', marginBottom: '6px' }}>
+                      Họ và tên
+                    </label>
+                    <div style={{ 
+                      padding: '10px 12px', 
+                      background: '#fff', 
+                      borderRadius: '8px',
+                      border: '1px solid #e5e7eb',
+                      color: '#374151'
+                    }}>
+                      {user?.fullName || 'Chưa cập nhật'}
+                    </div>
+                  </div>
+                </Col>
+                <Col xs={24} md={12}>
+                  <div style={{ marginBottom: '16px' }}>
+                    <label style={{ fontWeight: 600, color: '#374151', display: 'block', marginBottom: '6px' }}>
+                      Email
+                    </label>
+                    <div style={{ 
+                      padding: '10px 12px', 
+                      background: '#fff', 
+                      borderRadius: '8px',
+                      border: '1px solid #e5e7eb',
+                      color: '#374151'
+                    }}>
+                      {user?.email || 'Chưa cập nhật'}
+                    </div>
+                  </div>
+                </Col>
+                <Col xs={24} md={12}>
+                  <div>
+                    <label style={{ fontWeight: 600, color: '#374151', display: 'block', marginBottom: '6px' }}>
+                      Số điện thoại
+                    </label>
+                    <div style={{ 
+                      padding: '10px 12px', 
+                      background: '#fff', 
+                      borderRadius: '8px',
+                      border: '1px solid #e5e7eb',
+                      color: '#374151'
+                    }}>
+                      {(user as any)?.phone || 'Chưa cập nhật'}
+                    </div>
+                  </div>
+                </Col>
+              </Row>
 
-          {/* Account info (read-only) */}
-          <Row gutter={[16, 16]} style={{ marginBottom: '8px' }}>
-            <Col xs={24} md={12}>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontWeight: 600, color: '#374151', display: 'block', marginBottom: '6px' }}>
-                  Họ và tên
-                </label>
-                <div style={{ 
-                  padding: '10px 12px', 
-                  background: '#fff', 
-                  borderRadius: '8px',
-                  border: '1px solid #e5e7eb',
-                  color: '#374151'
-                }}>
-                  {user?.fullName || 'Chưa cập nhật'}
-                </div>
-              </div>
-            </Col>
-            <Col xs={24} md={12}>
-              <div style={{ marginBottom: '16px' }}>
-                <label style={{ fontWeight: 600, color: '#374151', display: 'block', marginBottom: '6px' }}>
-                  Email
-                </label>
-                <div style={{ 
-                  padding: '10px 12px', 
-                  background: '#fff', 
-                  borderRadius: '8px',
-                  border: '1px solid #e5e7eb',
-                  color: '#374151'
-                }}>
-                  {user?.email || 'Chưa cập nhật'}
-                </div>
-              </div>
-            </Col>
-            <Col xs={24} md={12}>
-              <div>
-                <label style={{ fontWeight: 600, color: '#374151', display: 'block', marginBottom: '6px' }}>
-                  Số điện thoại
-                </label>
-                <div style={{ 
-                  padding: '10px 12px', 
-                  background: '#fff', 
-                  borderRadius: '8px',
-                  border: '1px solid #e5e7eb',
-                  color: '#374151'
-                }}>
-                  {(user as any)?.phone || 'Chưa cập nhật'}
-                </div>
-              </div>
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleSubmit}
+                disabled={!isEditing}
+              >
+                <Row gutter={[16, 0]}>
+                  <Col xs={24} md={8}>
+                    <Form.Item
+                      name="gender"
+                      label={<span style={{ fontWeight: 600, color: '#374151' }}>Giới tính</span>}
+                      rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
+                    >
+                      <Select 
+                        placeholder="Chọn giới tính"
+                        style={{ borderRadius: '8px' }}
+                      >
+                        <Option value="male">Nam</Option>
+                        <Option value="female">Nữ</Option>
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={8}>
+                    <Form.Item
+                      name="province"
+                      label={<span style={{ fontWeight: 600, color: '#374151' }}>Tỉnh/Thành phố</span>}
+                    >
+                      <Select 
+                        placeholder="Chọn tỉnh/thành phố"
+                        showSearch
+                        allowClear
+                        style={{ borderRadius: '8px' }}
+                        filterOption={(input, option) =>
+                          option?.children?.toString().toLowerCase().includes(input.toLowerCase()) || false
+                        }
+                      >
+                        {provinces.map(province => (
+                          <Option key={province} value={province}>{province}</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={8}>
+                    <Form.Item
+                      name="district"
+                      label={<span style={{ fontWeight: 600, color: '#374151' }}>Quận/Huyện</span>}
+                    >
+                      <Select 
+                        placeholder="Chọn quận/huyện"
+                        showSearch
+                        allowClear
+                        style={{ borderRadius: '8px' }}
+                        filterOption={(input, option) =>
+                          option?.children?.toString().toLowerCase().includes(input.toLowerCase()) || false
+                        }
+                      >
+                        {districts.map(district => (
+                          <Option key={district} value={district}>{district}</Option>
+                        ))}
+                      </Select>
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                {isEditing && (
+                  <div style={{ marginTop: '24px', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
+                    <Button 
+                      onClick={() => {
+                        if (profileData) {
+                          setIsEditing(false);
+                          form.setFieldsValue({
+                            gender: profileData.gender || undefined,
+                            province: profileData.province || undefined,
+                            district: profileData.district || undefined,
+                          });
+                        } else {
+                          form.resetFields();
+                        }
+                        setSelectedFile(null);
+                        setPreviewUrl('');
+                      }}
+                      style={{ borderRadius: '8px' }}
+                    >
+                      {profileData ? 'Hủy bỏ' : 'Xóa form'}
+                    </Button>
+                    <Button 
+                      type="primary" 
+                      htmlType="submit" 
+                      loading={loading}
+                      icon={<SaveOutlined />}
+                      style={{ borderRadius: '8px' }}
+                    >
+                      {profileData ? 'Lưu thay đổi' : 'Lưu thông tin'}
+                    </Button>
+                  </div>
+                )}
+              </Form>
             </Col>
           </Row>
-
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={handleSubmit}
-            disabled={!isEditing}
-          >
-            <Row gutter={[16, 0]}>
-              <Col xs={24} md={8}>
-                <Form.Item
-                  name="gender"
-                  label={<span style={{ fontWeight: 600, color: '#374151' }}>Giới tính</span>}
-                  rules={[{ required: true, message: 'Vui lòng chọn giới tính!' }]}
-                >
-                  <Select 
-                    placeholder="Chọn giới tính"
-                    style={{ borderRadius: '8px' }}
-                  >
-                    <Option value="male">Nam</Option>
-                    <Option value="female">Nữ</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={8}>
-                <Form.Item
-                  name="province"
-                  label={<span style={{ fontWeight: 600, color: '#374151' }}>Tỉnh/Thành phố</span>}
-                >
-                  <Select 
-                    placeholder="Chọn tỉnh/thành phố"
-                    showSearch
-                    allowClear
-                    style={{ borderRadius: '8px' }}
-                    filterOption={(input, option) =>
-                      option?.children?.toString().toLowerCase().includes(input.toLowerCase()) || false
-                    }
-                  >
-                    {provinces.map(province => (
-                      <Option key={province} value={province}>{province}</Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-              <Col xs={24} md={8}>
-                <Form.Item
-                  name="district"
-                  label={<span style={{ fontWeight: 600, color: '#374151' }}>Quận/Huyện</span>}
-                >
-                  <Select 
-                    placeholder="Chọn quận/huyện"
-                    showSearch
-                    allowClear
-                    style={{ borderRadius: '8px' }}
-                    filterOption={(input, option) =>
-                      option?.children?.toString().toLowerCase().includes(input.toLowerCase()) || false
-                    }
-                  >
-                    {districts.map(district => (
-                      <Option key={district} value={district}>{district}</Option>
-                    ))}
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-
-            {isEditing && (
-              <div style={{ marginTop: '24px', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-                <Button 
-                  onClick={() => {
-                    if (profileData) {
-                      setIsEditing(false);
-                      form.setFieldsValue({
-                        gender: profileData.gender || undefined,
-                        province: profileData.province || undefined,
-                        district: profileData.district || undefined,
-                      });
-                    } else {
-                      form.resetFields();
-                    }
-                    setSelectedFile(null);
-                    setPreviewUrl('');
-                  }}
-                  style={{ borderRadius: '8px' }}
-                >
-                  {profileData ? 'Hủy bỏ' : 'Xóa form'}
-                </Button>
-                <Button 
-                  type="primary" 
-                  htmlType="submit" 
-                  loading={loading}
-                  icon={<SaveOutlined />}
-                  style={{ borderRadius: '8px' }}
-                >
-                  {profileData ? 'Lưu thay đổi' : 'Lưu thông tin'}
-                </Button>
-              </div>
-            )}
-          </Form>
         </Card>
       </Card>
     </div>

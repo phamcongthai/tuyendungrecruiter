@@ -40,7 +40,7 @@ export const applicationsAPI = {
     return res.data;
   },
 
-  async updateStatus(id: string, status: 'pending' | 'accepted' | 'rejected' | 'withdrawn', note?: string) {
+  async updateStatus(id: string, status: 'pending' | 'viewed' | 'shortlisted' | 'accepted' | 'rejected' | 'withdrawn', note?: string) {
     const res = await apiClient.patch(`/applications/${id}/status`, { status, note });
     return res.data as ApplicationItem;
   },
