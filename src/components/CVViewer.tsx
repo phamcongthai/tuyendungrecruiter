@@ -4,6 +4,7 @@ import { EyeOutlined } from '@ant-design/icons';
 import GrapeJS from 'grapesjs';
 import 'grapesjs/dist/css/grapes.min.css';
 import { usersAPI, type UserCvData } from '../apis/users.api';
+import { cvSamplesAPI } from '../apis/cv-samples.api';
 
 interface CVViewerProps {
   open: boolean;
@@ -69,13 +70,8 @@ const CVViewer: React.FC<CVViewerProps> = ({
           console.log('Step 2: User has cvId, fetching CV template:', cvId);
           try {
             // Gọi API cv-samples để lấy template
-            const templateResponse = await fetch(`http://localhost:3000/cv-samples/${cvId}`);
-            if (templateResponse.ok) {
-              cvTemplate = await templateResponse.json();
-              console.log('CV template received:', cvTemplate);
-            } else {
-              console.warn('Failed to fetch CV template:', templateResponse.status);
-            }
+            cvTemplate = await cvSamplesAPI.getCVSampleById(cvId);
+            console.log('CV template received:', cvTemplate);
           } catch (error) {
             console.warn('Error fetching CV template:', error);
           }
@@ -84,9 +80,15 @@ const CVViewer: React.FC<CVViewerProps> = ({
         }
 
         // Tạo data object
-        const data = {
+        const data: UserCvData = {
           user: userResponse,
-          cvTemplate: cvTemplate
+          cvTemplate: cvTemplate ? {
+            _id: cvTemplate._id,
+            name: cvTemplate.name,
+            title: cvTemplate.title || cvTemplate.name, // Fallback to name if title is not available
+            html: cvTemplate.html,
+            css: cvTemplate.css
+          } : null
         };
         
         setCvData(data);
