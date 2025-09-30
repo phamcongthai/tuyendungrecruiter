@@ -29,7 +29,9 @@ import type { JobData } from '../types/job.type';
 import { JOB_TYPE_LABELS, WORKING_MODE_LABELS } from '../types/job.type';
 import { formatCurrency } from '../utils/currency';
 import dayjs from 'dayjs';
-import { StarFilled, StarOutlined } from '@ant-design/icons';
+import { StarFilled, StarOutlined, MoreOutlined, CalendarOutlined } from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import { Dropdown, Tooltip, Form, DatePicker, Input as AntInput } from 'antd';
 
 const { Title, Text } = Typography;
 
@@ -58,9 +60,13 @@ interface ApplicationWithUser {
     email?: string;
     phone?: string;
   } | null;
-  status: 'pending' | 'viewed' | 'shortlisted' | 'accepted' | 'rejected' | 'withdrawn';
+  status: 'pending' | 'viewed' | 'shortlisted' | 'accepted' | 'rejected' | 'withdrawn' | 'interviewed' | 'interview_failed';
   note?: string;
   coverLetter?: string;
+  interested?: boolean;
+  interviewDate?: string | null;
+  interviewLocation?: string | null;
+  interviewNote?: string | null;
   createdAt: string;
 }
 
@@ -83,6 +89,8 @@ const ApplicationsPage: React.FC = () => {
   // State for applicant detail modal
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [selectedApplication, setSelectedApplication] = useState<ApplicationWithUser | null>(null);
+  const [interviewModalVisible, setInterviewModalVisible] = useState(false);
+  const [interviewForm] = Form.useForm();
 
   // State for CV viewer
   const [cvViewerVisible, setCvViewerVisible] = useState(false);
@@ -142,6 +150,16 @@ const ApplicationsPage: React.FC = () => {
   useEffect(() => {
     loadJobs();
   }, [jobsPage, jobsLimit]);
+
+  // Preselect job from query string if provided (from notification click)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const qJobId = params.get('jobId');
+    if (qJobId && jobs.length > 0) {
+      const matched = jobs.find(j => String(j._id) === String(qJobId));
+      if (matched) setSelectedJob(matched as any);
+    }
+  }, [jobs]);
 
   // Load applications when job is selected
   useEffect(() => {
@@ -305,10 +323,12 @@ const ApplicationsPage: React.FC = () => {
         const statusConfig = {
           pending: { color: 'blue', icon: <ClockCircleOutlined />, text: 'Chờ xử lý' },
           viewed: { color: 'gold', icon: <EyeOutlined />, text: 'Đã xem' },
-          shortlisted: { color: 'green', icon: <CheckCircleOutlined />, text: 'Quan tâm' },
+          shortlisted: { color: 'green', icon: <CheckCircleOutlined />, text: 'Đề xuất (shortlisted)' },
           accepted: { color: 'green', icon: <CheckCircleOutlined />, text: 'Đã chấp nhận' },
           rejected: { color: 'red', icon: <CloseCircleOutlined />, text: 'Đã từ chối' },
           withdrawn: { color: 'default', icon: <MinusCircleOutlined />, text: 'Đã rút hồ sơ' },
+          interviewed: { color: 'green', icon: <CheckCircleOutlined />, text: 'Đã phỏng vấn' },
+          interview_failed: { color: 'red', icon: <CloseCircleOutlined />, text: 'Trượt phỏng vấn' },
         };
         const config = statusConfig[status as keyof typeof statusConfig];
         return (
@@ -327,58 +347,118 @@ const ApplicationsPage: React.FC = () => {
     {
       title: 'Hành động',
       key: 'actions',
-      render: (_: any, record: ApplicationWithUser) => (
-        <div style={{ display: 'flex', gap: 8 }}>
-          <Button
-            type="link"
-            icon={<EyeOutlined />}
-            onClick={async () => {
-              setSelectedApplication(record);
-              setDetailModalVisible(true);
-              if (record.status === 'pending') {
-                try {
-                  await applicationsAPI.updateStatus(record._id, 'viewed');
-                  loadApplications();
-                } catch (e: any) {
-                  // ignore error silently
-                }
+      render: (_: any, record: ApplicationWithUser) => {
+        const transitions: Record<string, string[]> = {
+          pending: ['viewed', 'rejected', 'withdrawn'],
+          viewed: ['shortlisted', 'rejected', 'withdrawn'],
+          shortlisted: ['interviewed', 'rejected', 'withdrawn'],
+          interviewed: ['accepted', 'interview_failed', 'withdrawn'],
+          interview_failed: ['rejected'],
+          accepted: [],
+          rejected: [],
+          withdrawn: [],
+        };
+
+        const allowed = transitions[record.status] || [];
+
+        const allOptions: { key: any; label?: string; value?: any }[] = [
+          { key: 'viewed', label: 'Đánh dấu đã xem' },
+          { key: 'shortlisted', label: 'Đưa vào shortlist' },
+          { key: 'interviewed', label: 'Đánh dấu đã phỏng vấn' },
+          { key: 'interview_failed', label: 'Trượt phỏng vấn' },
+          { key: 'accepted', label: 'Chấp nhận' },
+          { key: 'rejected', label: 'Từ chối' },
+          { key: 'withdrawn', label: 'Rút hồ sơ' },
+        ];
+
+        const dropdownItems: MenuProps['items'] = [
+          ...allOptions
+            .filter(opt => allowed.includes(opt.key))
+            .map(opt => ({
+              key: opt.key,
+              label: opt.label,
+              onClick: async () => {
+                await applicationsAPI.updateStatus(record._id, opt.key as any);
+                await loadApplications();
               }
-            }}
-          >
-            Chi tiết
-          </Button>
-          <Button
-            type="link"
-            icon={<FileTextOutlined />}
-            onClick={async () => {
-              const accountId = record.accountId;
-              const userName = record.account?.fullName || 'Ứng viên';
-              handleViewCV(accountId, userName);
-              if (record.status === 'pending') {
-                try {
-                  await applicationsAPI.updateStatus(record._id, 'viewed');
-                  loadApplications();
-                } catch {}
-              }
-            }}
-          >
-            Xem CV
-          </Button>
-          <Button
-            type={record.status === 'shortlisted' ? 'primary' : 'default'}
-            icon={record.status === 'shortlisted' ? <StarFilled style={{ color: '#faad14' }} /> : <StarOutlined />}
-            onClick={async () => {
-              try {
-                const next = record.status === 'shortlisted' ? 'pending' : 'shortlisted';
-                await applicationsAPI.updateStatus(record._id, next);
-                loadApplications();
-              } catch {}
-            }}
-          >
-            Quan tâm
-          </Button>
-        </div>
-      ),
+            })),
+        ];
+
+        return (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Tooltip title="Chi tiết">
+              <Button
+                shape="circle"
+                icon={<EyeOutlined />}
+                onClick={async () => {
+                  try {
+                    if (record.status === 'pending') {
+                      await applicationsAPI.updateStatus(record._id, 'viewed');
+                      setApplications(prev => prev.map(app => app._id === record._id ? { ...app, status: 'viewed' } as any : app));
+                      await loadApplications();
+                    }
+                  } catch (e: any) {
+                  } finally {
+                    setSelectedApplication({ ...record, status: 'viewed' });
+                    setDetailModalVisible(true);
+                  }
+                }}
+              />
+            </Tooltip>
+            <Tooltip title="Xem CV">
+              <Button
+                shape="circle"
+                icon={<FileTextOutlined />}
+                onClick={async () => {
+                  try {
+                    if (record.status === 'pending') {
+                      await applicationsAPI.updateStatus(record._id, 'viewed');
+                      setApplications(prev => prev.map(app => app._id === record._id ? { ...app, status: 'viewed' } as any : app));
+                      await loadApplications();
+                    }
+                  } catch {}
+                  const accountId = record.accountId;
+                  const userName = record.account?.fullName || 'Ứng viên';
+                  handleViewCV(accountId, userName);
+                }}
+              />
+            </Tooltip>
+            <Tooltip title={record.interested ? 'Bỏ quan tâm' : 'Quan tâm'}>
+              <Button
+                shape="circle"
+                type={record.interested ? 'primary' : 'default'}
+                icon={record.interested ? <StarFilled style={{ color: '#faad14' }} /> : <StarOutlined />}
+                onClick={async () => {
+                  try {
+                    await applicationsAPI.setInterested(record._id, !record.interested);
+                    await loadApplications();
+                  } catch {}
+                }}
+              />
+            </Tooltip>
+            <Tooltip title="Thay đổi trạng thái">
+              <Dropdown menu={{ items: dropdownItems }} placement="bottomLeft">
+                <Button shape="circle" icon={<MoreOutlined />} />
+              </Dropdown>
+            </Tooltip>
+            <Tooltip title="Mời phỏng vấn">
+              <Button
+                shape="circle"
+                icon={<CalendarOutlined />}
+                onClick={() => {
+                  setSelectedApplication(record);
+                  interviewForm.setFieldsValue({
+                    interviewDate: record.interviewDate ? dayjs(record.interviewDate) : undefined,
+                    interviewLocation: record.interviewLocation,
+                    interviewNote: record.interviewNote,
+                  });
+                  setInterviewModalVisible(true);
+                }}
+              />
+            </Tooltip>
+          </div>
+        );
+      },
     },
   ];
 
@@ -586,6 +666,46 @@ const ApplicationsPage: React.FC = () => {
             )}
           </div>
         )}
+      </Modal>
+
+      {/* Interview Modal */}
+      <Modal
+        title="Mời phỏng vấn"
+        open={interviewModalVisible}
+        onCancel={() => setInterviewModalVisible(false)}
+        onOk={async () => {
+          if (!selectedApplication) return;
+          try {
+            const values = await interviewForm.validateFields();
+            await applicationsAPI.updateInterview(selectedApplication._id, {
+              interviewDate: values.interviewDate ? values.interviewDate.toISOString() : null,
+              interviewLocation: values.interviewLocation || null,
+              interviewNote: values.interviewNote || null,
+            });
+            message.success('Đã cập nhật lịch phỏng vấn và thông báo cho ứng viên');
+            setInterviewModalVisible(false);
+            await loadApplications();
+          } catch (e: any) {
+            if (e?.errorFields) return; // form validate error
+            message.error(e?.message || 'Không thể cập nhật lịch phỏng vấn');
+          }
+        }}
+        okText="Gửi lời mời"
+      >
+        <Form form={interviewForm} layout="vertical">
+          <Form.Item name="interviewDate" label="Thời gian phỏng vấn">
+            <DatePicker showTime format="DD/MM/YYYY HH:mm" style={{ width: '100%' }} />
+          </Form.Item>
+          <Form.Item name="interviewLocation" label="Địa điểm/Link online">
+            <AntInput placeholder="Ví dụ: 123 Trần Duy Hưng, Hà Nội hoặc Zoom link" />
+          </Form.Item>
+          <Form.Item name="interviewNote" label="Ghi chú">
+            <AntInput.TextArea rows={3} placeholder="Thông tin bổ sung cho ứng viên" />
+          </Form.Item>
+          <div style={{ background: '#fafafa', padding: 12, borderRadius: 8 }}>
+            <Text type="secondary">Cách 1: Dùng notification + lưu chi tiết trong application. Khi mời phỏng vấn, hệ thống sẽ cập nhật trường và gửi thông báo cho ứng viên.</Text>
+          </div>
+        </Form>
       </Modal>
 
       {/* CV Viewer Modal */}

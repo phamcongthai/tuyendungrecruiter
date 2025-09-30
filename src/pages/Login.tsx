@@ -91,36 +91,18 @@ const Login: React.FC = () => {
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'stretch',
-        background: 'linear-gradient(135deg, #f5fbff 0%, #f7f9fb 100%)'
+        background: '#ffffff'
       }}
     >
-      <div
-        style={{
-          flex: 1,
-          display: 'none',
-          background: 'linear-gradient(180deg, #1f4b99 0%, #00b14f 100%)',
-          position: 'relative'
-        }}
-        className="login-hero"
-      >
-        <div
-          style={{
-            position: 'absolute',
-            inset: 0,
-            opacity: 0.1,
-            background:
-              'radial-gradient(1000px 600px at 20% 20%, #ffffff 0%, rgba(255,255,255,0) 70%)'
-          }}
-        />
-      </div>
-
+      {/* Left: Login form */}
       <div
         style={{
           flex: 1,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '40px 16px'
+          padding: '40px 16px',
+          background: 'linear-gradient(135deg, #f5fbff 0%, #f7f9fb 100%)'
         }}
       >
         <Card
@@ -219,6 +201,19 @@ const Login: React.FC = () => {
           </Form>
         </Card>
       </div>
+      {/* Right: Banner image */}
+      <div
+        style={{
+          flex: 1,
+          display: 'none',
+          backgroundImage: 'url(https://tuyendung.topcv.vn/app/_nuxt/img/banner-01.d2c28c7.png)',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          minHeight: '100%',
+        }}
+        aria-label="Recruiter login banner"
+      />
     </div>
   );
 };

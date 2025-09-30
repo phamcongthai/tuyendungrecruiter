@@ -4,10 +4,30 @@ export interface Notification {
   _id: string;
   userId: string;
   message: string;
-  type: 'application_submitted' | 'system' | 'message' | 'other';
+  type:
+    | 'NEW_APPLICATION'
+    | 'APPLICATION_VIEWED'
+    | 'APPLICATION_PASSED'
+    | 'APPLICATION_REJECTED'
+    | 'INTERVIEW_INVITED'
+    | 'INTERVIEW_RESULT'
+    | 'OFFER_SENT'
+    | 'OFFER_RESPONSE'
+    | 'HIRED'
+    | 'SYSTEM'
+    | 'MESSAGE'
+    | 'OTHER'
+    | 'application_submitted' // backward compat
+    | 'system' // backward compat
+    | 'message' // backward compat
+    | 'other'; // backward compat
   isRead: boolean;
   readAt?: string;
   deleted: boolean;
+  applicationId?: string;
+  jobId?: string;
+  applicantId?: string;
+  metadata?: any;
   createdAt: string;
   updatedAt: string;
 }
@@ -15,7 +35,7 @@ export interface Notification {
 export interface CreateNotificationDto {
   userId: string;
   message: string;
-  type?: 'application_submitted' | 'system' | 'message' | 'other';
+  type?: Notification['type'];
 }
 
 export interface UpdateNotificationDto {
@@ -26,7 +46,7 @@ export interface UpdateNotificationDto {
 export const notificationsApi = {
   // Lấy tất cả thông báo của recruiter hiện tại
   getNotifications: async (recruiterId: string): Promise<Notification[]> => {
-    const response = await apiClient.get(`/notifications?userId=${recruiterId}`);
+    const response = await apiClient.get(`/notifications?userId=${recruiterId}&audience=recruiter`);
     return response.data;
   },
 

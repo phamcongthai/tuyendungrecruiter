@@ -25,7 +25,7 @@ const NotificationIcon: React.FC = () => {
   return (
     <Tooltip title={isConnected ? "Thông báo" : "Đang kết nối..."}>
       <Dropdown
-        menu={{ items: [{ key: 'panel', label: <NotificationDropdown onRefresh={handleRefresh} /> }] }}
+        dropdownRender={() => <NotificationDropdown onRefresh={handleRefresh} />}
         trigger={['click']}
         placement="bottomRight"
         open={isDropdownVisible}

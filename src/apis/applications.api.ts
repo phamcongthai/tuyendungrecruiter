@@ -22,7 +22,11 @@ export interface ApplicationItem {
     phone?: string;
   } | null;
   resumeUrl?: string;
-  status: 'pending' | 'accepted' | 'rejected' | 'withdrawn';
+  status: 'pending' | 'viewed' | 'shortlisted' | 'accepted' | 'rejected' | 'withdrawn' | 'interviewed' | 'interview_failed';
+  interested?: boolean;
+  interviewDate?: string | null;
+  interviewLocation?: string | null;
+  interviewNote?: string | null;
   note?: string;
   createdAt: string;
 }
@@ -40,8 +44,18 @@ export const applicationsAPI = {
     return res.data;
   },
 
-  async updateStatus(id: string, status: 'pending' | 'viewed' | 'shortlisted' | 'accepted' | 'rejected' | 'withdrawn', note?: string) {
+  async updateStatus(id: string, status: 'pending' | 'viewed' | 'shortlisted' | 'accepted' | 'rejected' | 'withdrawn' | 'interviewed' | 'interview_failed', note?: string) {
     const res = await apiClient.patch(`/applications/${id}/status`, { status, note });
+    return res.data as ApplicationItem;
+  },
+
+  async setInterested(id: string, interested: boolean) {
+    const res = await apiClient.patch(`/applications/${id}/interested`, { interested });
+    return res.data as ApplicationItem;
+  },
+
+  async updateInterview(id: string, payload: { interviewDate?: string | null; interviewLocation?: string | null; interviewNote?: string | null }) {
+    const res = await apiClient.patch(`/applications/${id}/interview`, payload);
     return res.data as ApplicationItem;
   },
 };

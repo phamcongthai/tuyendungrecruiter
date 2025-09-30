@@ -7,7 +7,10 @@ import {
   FileTextOutlined,
   SettingOutlined,
   MessageOutlined,
-  InfoCircleOutlined
+  InfoCircleOutlined,
+  EyeOutlined,
+  CalendarOutlined,
+  CloseCircleOutlined
 } from '@ant-design/icons';
 import { useNotifications } from '../contexts/NotificationContext';
 import dayjs from 'dayjs';
@@ -40,8 +43,16 @@ const NotificationModal: React.FC<NotificationModalProps> = ({ visible, onClose 
 
   const getNotificationIcon = (type: string) => {
     switch (type) {
-      case 'application_submitted':
+      case 'NEW_APPLICATION':
         return <FileTextOutlined style={{ color: '#52c41a' }} />;
+      case 'APPLICATION_VIEWED':
+        return <EyeOutlined style={{ color: '#faad14' }} />;
+      case 'APPLICATION_PASSED':
+        return <CheckCircleOutlined style={{ color: '#52c41a' }} />;
+      case 'APPLICATION_REJECTED':
+        return <CloseCircleOutlined style={{ color: '#ff4d4f' }} />;
+      case 'INTERVIEW_INVITED':
+        return <CalendarOutlined style={{ color: '#1890ff' }} />;
       case 'system':
         return <SettingOutlined style={{ color: '#1890ff' }} />;
       case 'message':
@@ -53,8 +64,16 @@ const NotificationModal: React.FC<NotificationModalProps> = ({ visible, onClose 
 
   const getNotificationTypeText = (type: string) => {
     switch (type) {
-      case 'application_submitted':
-        return 'Đơn ứng tuyển';
+      case 'NEW_APPLICATION':
+        return 'Đơn ứng tuyển mới';
+      case 'APPLICATION_VIEWED':
+        return 'Hồ sơ đã xem';
+      case 'APPLICATION_PASSED':
+        return 'Vào shortlist';
+      case 'APPLICATION_REJECTED':
+        return 'Bị từ chối';
+      case 'INTERVIEW_INVITED':
+        return 'Mời phỏng vấn';
       case 'system':
         return 'Hệ thống';
       case 'message':

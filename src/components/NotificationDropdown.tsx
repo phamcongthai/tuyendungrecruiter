@@ -31,10 +31,13 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'application_submitted':
+      case 'NEW_APPLICATION':
         return <FileTextOutlined style={{ color: '#52c41a' }} />;
       case 'system':
+      case 'SYSTEM':
         return <SettingOutlined style={{ color: '#1890ff' }} />;
       case 'message':
+      case 'MESSAGE':
         return <MessageOutlined style={{ color: '#722ed1' }} />;
       default:
         return <InfoCircleOutlined style={{ color: '#faad14' }} />;
@@ -44,10 +47,29 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
   const getNotificationTypeText = (type: string) => {
     switch (type) {
       case 'application_submitted':
-        return 'Đơn ứng tuyển';
+      case 'NEW_APPLICATION':
+        return 'Đơn ứng tuyển mới';
+      case 'APPLICATION_VIEWED':
+        return 'Ứng viên cập nhật';
+      case 'APPLICATION_PASSED':
+        return 'Qua vòng CV';
+      case 'APPLICATION_REJECTED':
+        return 'Ứng viên bị loại';
+      case 'INTERVIEW_INVITED':
+        return 'Mời phỏng vấn';
+      case 'INTERVIEW_RESULT':
+        return 'Kết quả phỏng vấn';
+      case 'OFFER_SENT':
+        return 'Đã gửi offer';
+      case 'OFFER_RESPONSE':
+        return 'Phản hồi offer';
+      case 'HIRED':
+        return 'Đã tuyển';
       case 'system':
+      case 'SYSTEM':
         return 'Hệ thống';
       case 'message':
+      case 'MESSAGE':
         return 'Tin nhắn';
       default:
         return 'Khác';
@@ -142,15 +164,17 @@ const NotificationDropdown: React.FC<NotificationDropdownProps> = ({ onRefresh }
                   borderBottom: '1px solid #f5f5f5'
                 }}
                 onClick={async () => {
-                  // Nếu là thông báo đơn ứng tuyển, điều hướng tới trang ứng viên
-                  if (notification.type === 'application_submitted') {
-                    try {
-                      if (!notification.isRead) {
-                        await handleMarkAsRead(notification._id);
-                      }
-                    } catch {}
+                  try {
+                    if (!notification.isRead) {
+                      await handleMarkAsRead(notification._id);
+                    }
+                  } catch {}
+                  // Điều hướng tới trang ứng viên; nếu có jobId thì kèm query để preselect
+                  const jobId = (notification as any).jobId || (notification.metadata && notification.metadata.jobId);
+                  if (jobId) {
+                    navigate(`/applications?jobId=${jobId}`);
+                  } else {
                     navigate('/applications');
-                    return;
                   }
                 }}
                 actions={[

@@ -6,6 +6,7 @@ import Footer from '../components/Footer';
 import EmailVerificationBanner from '../components/EmailVerificationBanner';
 import { useUser } from '../contexts/UserContext';
 import './Layout.css';
+import GlobalNotice from '../components/GlobalNotice';
 
 const MainLayout: React.FC = () => {
   const { user } = useUser();
@@ -26,6 +27,7 @@ const MainLayout: React.FC = () => {
       
       {/* Full Width Header */}
       <Header />
+      <GlobalNotice />
       
       {/* Content Area with Sidebar */}
       <div className="layout-body">
