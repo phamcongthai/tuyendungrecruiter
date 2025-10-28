@@ -14,7 +14,14 @@ const Sidebar: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const menuSections = [
+  interface MenuItem {
+    key: string;
+    icon: React.ReactNode;
+    label: string;
+    badge?: string;
+  }
+
+  const menuSections: { title: string; items: MenuItem[] }[] = [
     {
       title: 'Tổng quan',
       items: [
