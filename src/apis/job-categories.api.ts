@@ -30,8 +30,6 @@ export const jobCategoriesAPI = {
   // Get active job categories only
   getActiveCategories: async (): Promise<JobCategoriesResponse> => {
     const response = await apiClient.get('/job-categories?status=active');
-    console.log(response);
-    
     return response.data;
   },
 

@@ -43,7 +43,6 @@ const MainLayout: React.FC = () => {
                 <EmailVerificationBanner 
                   userEmail={user.email}
                   onVerificationSent={() => {
-                    console.log('Verification email sent for:', user.email);
                   }}
                 />
               )}

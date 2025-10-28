@@ -28,16 +28,13 @@ api.interceptors.response.use(
     const status = error.response?.status;
 
     if (status === 401) {
-      console.log("Token hết hạn, cần đăng nhập lại");
       localStorage.removeItem('token');
       
       // Chỉ hiển thị thông báo nếu không phải từ checkRecruiterAccess
       if (!error.config?.url?.includes('/auth/me')) {
         try {
           await api.post("/auth/logout");
-        } catch (e) {
-          console.log("Logout failed:", e);
-        }
+        } catch (e) {}
         
         Swal.fire({
           icon: 'warning',
@@ -50,7 +47,6 @@ api.interceptors.response.use(
         });
       }
     } else if (status === 403) {
-      console.log("Bạn không có quyền truy cập");
       
       // Chỉ hiển thị thông báo nếu không phải từ checkRecruiterAccess
       if (!error.config?.url?.includes('/auth/me')) {

@@ -128,9 +128,6 @@ const Company: React.FC = () => {
   };
 
   const handleEdit = (company: CompanyProfile) => {
-    console.log('Editing company:', company);
-    console.log('Company logo URL:', company.logo);
-    
     setEditingCompany(company);
     setLogoUrl(company.logo || '');
     setSelectedFile(null);
@@ -257,7 +254,6 @@ const Company: React.FC = () => {
           const uploadResponse = await companyAPI.uploadLogo(companyId, selectedFile);
           if (uploadResponse.success && uploadResponse.data?.logo) {
             const newLogoUrl = uploadResponse.data.logo;
-            console.log('New logo URL:', newLogoUrl);
             message.success('Logo đã được tải lên thành công!');
             // Update the logo URL state with the uploaded logo
             setLogoUrl(newLogoUrl);
@@ -267,7 +263,6 @@ const Company: React.FC = () => {
             message.warning('Công ty đã được lưu nhưng không thể tải logo lên');
           }
         } catch (uploadError: any) {
-          console.error('Logo upload error:', uploadError);
           message.warning('Công ty đã được lưu nhưng không thể tải logo lên');
         }
       }
@@ -304,8 +299,6 @@ const Company: React.FC = () => {
       await fetchCompanies();
 
     } catch (error: any) {
-      console.error('Error saving company:', error);
-      
       await Swal.fire({
         icon: 'error',
         title: 'Có lỗi xảy ra!',

@@ -108,7 +108,6 @@ const ApplicationsPage: React.FC = () => {
         status: 'active'
       });
       
-      console.log(JSON.stringify(response, null, 2));
       setJobs((response.data || []).map((job: any) => ({
         ...job,
         applicationCount: job.applicationCount || 0
@@ -133,8 +132,6 @@ const ApplicationsPage: React.FC = () => {
         appsPage, 
         appsLimit
       );
-      
-      console.log(JSON.stringify(response, null, 2));
       
       setApplications(response.data || []);
       setAppsTotal(response.total || 0);

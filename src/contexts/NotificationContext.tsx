@@ -39,10 +39,8 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       });
 
       newSocket.on('connect', async () => {
-        console.log('Connected to notifications socket');
         setIsConnected(true);
         // Join với sự kiện recruiterJoin để kích hoạt đồng bộ unreadCount từ server
-        console.log('Joining as recruiter with recruiterId:', user.id);
         newSocket.emit('recruiterJoin', { recruiterId: user.id });
         // Load thông báo ban đầu ngay khi kết nối thành công
         try {
@@ -53,12 +51,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       });
 
       newSocket.on('disconnect', () => {
-        console.log('Disconnected from notifications socket');
         setIsConnected(false);
       });
 
       newSocket.on('newNotification', (notification: Notification) => {
-        console.log('Received new notification:', notification);
         // Đảm bảo thêm vào đầu danh sách và tăng badge ngay lập tức
         setNotifications(prev => [notification, ...prev]);
         setUnreadCount(prev => prev + 1);
@@ -66,13 +62,10 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
 
       // Nhận unreadCount realtime từ server khi vừa join hoặc khi server gửi cập nhật
       newSocket.on('unreadCount', (data: { unreadCount: number }) => {
-        console.log('Unread count update:', data);
         setUnreadCount(data.unreadCount || 0);
       });
 
-      newSocket.on('joinedRoom', (data) => {
-        console.log('Joined room:', data);
-      });
+      newSocket.on('joinedRoom', () => {});
 
       setSocket(newSocket);
 
@@ -112,7 +105,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({ chil
       // Cập nhật lại badge dựa trên dữ liệu mới nhất từ API
       setUnreadCount(data.filter(n => !n.isRead).length);
     } catch (error) {
-      console.error('Error loading notifications:', error);
       // Nếu không có thông báo, set empty array
       setNotifications([]);
       setUnreadCount(0);

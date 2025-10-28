@@ -29,7 +29,7 @@ const JobCreateForm: React.FC<JobCreateFormProps> = ({ onSuccess, onCancel }) =>
         const response = await jobCategoriesAPI.getActiveCategories();
         setJobCategories(response.data);
       } catch (error: any) {
-        console.error('Failed to load job categories:', error);
+        // ignore
       }
     };
     loadJobCategories();

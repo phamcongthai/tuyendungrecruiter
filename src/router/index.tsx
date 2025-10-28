@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Home from '../pages/Home';
 import Register from '../pages/Register';
 import Login from '../pages/Login';
@@ -16,7 +16,6 @@ import MainLayout from '../layouts/MainLayout';
 
 const AppRouter: React.FC = () => {
   return (
-    <Router>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Home />} />
@@ -50,7 +49,6 @@ const AppRouter: React.FC = () => {
           <Route path="/applications" element={<ApplicationsPage />} />
         </Route>
       </Routes>
-    </Router>
   );
 };
 

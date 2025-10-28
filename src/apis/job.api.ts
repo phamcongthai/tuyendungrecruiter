@@ -64,7 +64,6 @@ export const fetchJobs = async (filters: JobFilters = {}): Promise<JobListRespon
       total: response.data.total || 0,
     };
   } catch (error: any) {
-    console.error('fetchJobs error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Failed to fetch jobs');
   }
 };
@@ -80,7 +79,6 @@ export const fetchJobById = async (id: string): Promise<JobResponse> => {
       data: response.data,
     };
   } catch (error: any) {
-    console.error('fetchJobById error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Failed to fetch job details');
   }
 };
@@ -100,7 +98,6 @@ export const createJob = async (jobData: CreateJobData): Promise<JobResponse> =>
       data: response.data,
     };
   } catch (error: any) {
-    console.error('createJob error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Failed to create job');
   }
 };
@@ -120,7 +117,6 @@ export const updateJob = async (id: string, jobData: UpdateJobData): Promise<Job
       data: response.data,
     };
   } catch (error: any) {
-    console.error('updateJob error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Failed to update job');
   }
 };
@@ -135,7 +131,6 @@ export const deleteJob = async (id: string): Promise<{ success: boolean; message
       message: 'Job deleted successfully',
     };
   } catch (error: any) {
-    console.error('deleteJob error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Failed to delete job');
   }
 };
@@ -151,7 +146,6 @@ export const toggleJobStatus = async (id: string): Promise<JobResponse> => {
       data: response.data,
     };
   } catch (error: any) {
-    console.error('toggleJobStatus error:', error.response?.data || error.message);
     throw new Error(error.response?.data?.message || 'Failed to toggle job status');
   }
 };

@@ -5,9 +5,7 @@ import {
   UserOutlined, 
   BarChartOutlined,
   SettingOutlined,
-  BellOutlined,
   TeamOutlined,
-  StarOutlined,
   BankOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -55,17 +53,6 @@ const Sidebar: React.FC = () => {
           icon: <TeamOutlined />,
           label: 'Tất cả ứng viên',
         },
-        {
-          key: '/applications/pending',
-          icon: <StarOutlined />,
-          label: 'Chờ xử lý',
-          badge: '5'
-        },
-        {
-          key: '/applications/reviewed',
-          icon: <UserOutlined />,
-          label: 'Đã xem',
-        }
       ]
     },
     {
@@ -75,12 +62,6 @@ const Sidebar: React.FC = () => {
           key: '/analytics',
           icon: <BarChartOutlined />,
           label: 'Thống kê',
-        },
-        {
-          key: '/notifications',
-          icon: <BellOutlined />,
-          label: 'Thông báo',
-          badge: '3'
         },
         {
           key: '/settings',

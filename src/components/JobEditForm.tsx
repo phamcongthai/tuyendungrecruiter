@@ -74,7 +74,6 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
         const response = await jobCategoriesAPI.getActiveCategories();
         setJobCategories(response.data);
       } catch (error: any) {
-        console.error('Failed to load job categories:', error);
       }
     };
     loadJobCategories();

@@ -32,13 +32,13 @@ const CVViewer: React.FC<CVViewerProps> = ({
         setLoading(true);
         
         // Bước 1: Lấy user profile từ accountId
-        console.log('Step 1: Fetching user profile for accountId:', accountId);
+        
         let userResponse;
         try {
           userResponse = await usersAPI.getUserByAccountId(accountId);
-          console.log('User profile received:', userResponse);
+          
         } catch (error) {
-          console.error('Error fetching user profile:', error);
+          
           // Fallback: tạo user data giả để test
           userResponse = {
             _id: 'test-user-id',
@@ -55,7 +55,7 @@ const CVViewer: React.FC<CVViewerProps> = ({
               summary: 'Kinh nghiệm phát triển web với React và Node.js'
             }
           };
-          console.log('Using fallback user data:', userResponse);
+          
         }
         
         if (!userResponse) {
@@ -67,16 +67,16 @@ const CVViewer: React.FC<CVViewerProps> = ({
         let cvTemplate = null;
         
         if (cvId) {
-          console.log('Step 2: User has cvId, fetching CV template:', cvId);
+          
           try {
             // Gọi API cv-samples để lấy template
             cvTemplate = await cvSamplesAPI.getCVSampleById(cvId);
-            console.log('CV template received:', cvTemplate);
+            
           } catch (error) {
-            console.warn('Error fetching CV template:', error);
+            
           }
         } else {
-          console.log('Step 2: User has no cvId, will use default template');
+          
         }
 
         // Tạo data object
@@ -102,7 +102,7 @@ const CVViewer: React.FC<CVViewerProps> = ({
         }
         
         // Bước 3: Initialize GrapesJS editor
-        console.log('Step 3: Initializing GrapesJS editor');
+        
         const editor = GrapeJS.init({
           container: container,
           height: '700px',
@@ -194,18 +194,18 @@ const CVViewer: React.FC<CVViewerProps> = ({
             return false;
           });
         } catch (error) {
-          console.warn('Error disabling editor interactions:', error);
+          
         }
 
         editorRef.current = editor;
         initRef.current = true;
 
         // Bước 4: Load CV template và apply data
-        console.log('Step 4: Loading CV template and applying data');
+        
         await loadCVTemplate(data);
         
       } catch (error: any) {
-        console.error('Error initializing CV viewer:', error);
+        
         message.error('Không thể tải CV: ' + (error?.message || 'Lỗi không xác định'));
       } finally {
         setLoading(false);
@@ -221,7 +221,7 @@ const CVViewer: React.FC<CVViewerProps> = ({
         try {
           editorRef.current.destroy();
         } catch (error) {
-          console.warn('Error destroying editor:', error);
+          
         }
         editorRef.current = null;
         initRef.current = false;
@@ -234,7 +234,7 @@ const CVViewer: React.FC<CVViewerProps> = ({
 
     try {
       if (!data.cvTemplate) {
-        console.warn('Không có CV template, sử dụng template mặc định');
+        
         // Sử dụng template mặc định
         const defaultTemplate = {
           html: `
@@ -281,7 +281,7 @@ const CVViewer: React.FC<CVViewerProps> = ({
       setTimeout(() => {
         const doc = getEditorDocument();
         if (doc) {
-          console.log('Applying user data to template:', data.user);
+          
           
           // Apply cvFields nếu có
           if (data.user.cvFields) {
@@ -289,7 +289,7 @@ const CVViewer: React.FC<CVViewerProps> = ({
               const element = doc.querySelector(`[data-field="${key}"]`);
               if (element) {
                 element.textContent = String(data.user.cvFields?.[key] || '');
-                console.log(`Applied field ${key}:`, data.user.cvFields?.[key]);
+                
               }
             });
           }
@@ -298,14 +298,14 @@ const CVViewer: React.FC<CVViewerProps> = ({
           const avatarElement = doc.querySelector('[data-field="avatar"]') as HTMLImageElement;
           if (avatarElement && data.user.avatar) {
             avatarElement.src = data.user.avatar;
-            console.log('Applied avatar:', data.user.avatar);
+            
           }
 
           // Apply user name if available
           const nameElement = doc.querySelector('[data-field="fullName"]');
           if (nameElement && userName) {
             nameElement.textContent = userName;
-            console.log('Applied name:', userName);
+            
           }
 
           // Apply other user data
@@ -327,7 +327,7 @@ const CVViewer: React.FC<CVViewerProps> = ({
       }, 200);
 
     } catch (error) {
-      console.error('Error loading CV template:', error);
+      
       message.error('Không thể tải mẫu CV');
     }
   };
@@ -345,7 +345,7 @@ const CVViewer: React.FC<CVViewerProps> = ({
       try {
         editorRef.current.destroy();
       } catch (error) {
-        console.warn('Error destroying editor on close:', error);
+        
       }
       editorRef.current = null;
       initRef.current = false;

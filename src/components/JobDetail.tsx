@@ -92,7 +92,6 @@ const JobDetail: React.FC<JobDetailProps> = ({
       setApplications(res.data || []);
       setAppsTotal(res.total || 0);
     } catch (error: any) {
-      console.error('Error loading applications:', error);
       message.error('Không thể tải danh sách ứng viên');
     } finally {
       setAppsLoading(false);

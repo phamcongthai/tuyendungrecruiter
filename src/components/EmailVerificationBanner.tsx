@@ -30,7 +30,6 @@ const EmailVerificationBanner: React.FC<EmailVerificationBannerProps> = ({
         message.error(response.message || 'Không thể gửi email xác thực. Vui lòng thử lại.');
       }
     } catch (error: any) {
-      console.error('Resend verification error:', error);
       message.error(error.message || 'Có lỗi xảy ra khi gửi email xác thực');
     } finally {
       setSending(false);

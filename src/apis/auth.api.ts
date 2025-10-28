@@ -27,8 +27,6 @@ export const authAPI = {
   // Đăng ký nhà tuyển dụng
   register: async (data: RegisterData): Promise<AuthResponse> => {
     try {
-      console.log(data);
-      
       const response = await axios.post(`${API_BASE_URL}/auth/register/recruiter`, data);
       return response.data;
     } catch (error: any) {
