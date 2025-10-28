@@ -94,126 +94,160 @@ const Login: React.FC = () => {
         background: '#ffffff'
       }}
     >
-      {/* Left: Login form */}
+      {/* Left: Login form (50%) */}
       <div
         style={{
-          flex: 1,
+          flex: '0 0 50%',
+          maxWidth: '50%',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          padding: '40px 16px',
+          padding: '40px 24px',
           background: 'linear-gradient(135deg, #f5fbff 0%, #f7f9fb 100%)'
         }}
       >
-        <Card
-          style={{
-            width: '100%',
-            maxWidth: 440,
-            borderRadius: 20,
-            border: '1px solid #e6eef7',
-            boxShadow: '0 10px 40px rgba(31,75,153,0.08)'
-          }}
-          bodyStyle={{ padding: 28 }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: 8 }}>
-            <div
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '8px 14px',
-                borderRadius: 999,
-                background: '#eafaf1',
-                color: '#111111',
-                fontWeight: 600,
-                fontSize: 12
-              }}
-            >
-              Nhà tuyển dụng
+        <div style={{ width: '100%', maxWidth: 480 }}>
+          {/* Branding */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
+              <div
+                style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: 10,
+                  background: '#00b14f',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  fontWeight: 800
+                }}
+                aria-label="Hi word logo"
+              >
+                H
+              </div>
+              <div style={{ fontSize: 20, fontWeight: 800, color: '#111111' }}>Hi word</div>
             </div>
           </div>
-          <Title level={3} style={{ color: '#111111', textAlign: 'center', margin: 0 }}>
-            Đăng nhập
-          </Title>
-          <div
-            style={{ textAlign: 'center', color: '#6b7280', marginTop: 6, marginBottom: 20 }}
+
+          <Card
+            style={{
+              width: '100%',
+              borderRadius: 20,
+              border: '1px solid #e6eef7',
+              boxShadow: '0 10px 40px rgba(31,75,153,0.08)'
+            }}
+            bodyStyle={{ padding: 28 }}
           >
-            Truy cập bảng điều khiển nhà tuyển dụng
-          </div>
-
-          <Form layout="vertical" onFinish={onFinish}>
-            <Form.Item
-              name="email"
-              label="Email"
-              rules={[
-                { required: true, message: 'Vui lòng nhập email' },
-                { type: 'email', message: 'Email không hợp lệ' }
-              ]}
-            >
-              <Input
-                prefix={<MailOutlined style={{ color: '#111111' }} />}
-                placeholder="Email"
-                size="large"
-              />
-            </Form.Item>
-
-            <Form.Item
-              name="password"
-              label="Mật khẩu"
-              rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
-            >
-              <Input.Password
-                prefix={<LockOutlined style={{ color: '#111111' }} />}
-                placeholder="Mật khẩu"
-                size="large"
-              />
-            </Form.Item>
-
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
-              block
-              style={{
-                height: 44,
-                background: '#00b14f',
-                border: 'none',
-                borderRadius: 10,
-                fontWeight: 600
-              }}
-            >
-              {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-            </Button>
-
-            <Divider style={{ margin: '20px 0' }} />
-            <div style={{ textAlign: 'center', color: '#6b7280' }}>
-              Chưa có tài khoản?{' '}
-              <Link to="/register" style={{ color: '#111111', fontWeight: 600 }}>
-                Đăng ký ngay
-              </Link>
+            <div style={{ textAlign: 'left', marginBottom: 8 }}>
+              <div
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '8px 14px',
+                  borderRadius: 999,
+                  background: '#eafaf1',
+                  color: '#111111',
+                  fontWeight: 600,
+                  fontSize: 12
+                }}
+              >
+                Dành cho nhà tuyển dụng
+              </div>
             </div>
-            <div style={{ textAlign: 'center', color: '#6b7280', marginTop: 8, fontSize: 14 }}>
-              Chưa nhận được email xác thực?{' '}
-              <Link to="/resend-verification" style={{ color: '#00b14f', fontWeight: 500 }}>
-                Gửi lại
-              </Link>
+            <Title level={3} style={{ color: '#111111', textAlign: 'left', margin: 0 }}>
+              Đăng nhập
+            </Title>
+            <div style={{ color: '#6b7280', marginTop: 6, marginBottom: 20 }}>
+              Truy cập bảng điều khiển nhà tuyển dụng Hi word
             </div>
-          </Form>
-        </Card>
+
+            <Form layout="vertical" onFinish={onFinish}>
+              <Form.Item
+                name="email"
+                label="Email"
+                rules={[
+                  { required: true, message: 'Vui lòng nhập email' },
+                  { type: 'email', message: 'Email không hợp lệ' }
+                ]}
+              >
+                <Input
+                  prefix={<MailOutlined style={{ color: '#111111' }} />}
+                  placeholder="Email"
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item
+                name="password"
+                label="Mật khẩu"
+                rules={[{ required: true, message: 'Vui lòng nhập mật khẩu' }]}
+              >
+                <Input.Password
+                  prefix={<LockOutlined style={{ color: '#111111' }} />}
+                  placeholder="Mật khẩu"
+                  size="large"
+                />
+              </Form.Item>
+
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                block
+                style={{
+                  height: 48,
+                  background: '#00b14f',
+                  border: 'none',
+                  borderRadius: 12,
+                  fontWeight: 700
+                }}
+              >
+                {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+              </Button>
+
+              <Divider style={{ margin: '20px 0' }} />
+              <div style={{ textAlign: 'center', color: '#6b7280' }}>
+                Chưa có tài khoản?{' '}
+                <Link to="/register" style={{ color: '#111111', fontWeight: 600 }}>
+                  Đăng ký ngay
+                </Link>
+              </div>
+              <div style={{ textAlign: 'center', color: '#6b7280', marginTop: 8, fontSize: 14 }}>
+                Chưa nhận được email xác thực?{' '}
+                <Link to="/resend-verification" style={{ color: '#00b14f', fontWeight: 500 }}>
+                  Gửi lại
+                </Link>
+              </div>
+            </Form>
+          </Card>
+        </div>
       </div>
-      {/* Right: Banner image */}
+
+      {/* Right: Banner image (50%) */}
       <div
         style={{
-          flex: 1,
-          display: 'none',
-          backgroundImage: 'url(https://tuyendung.topcv.vn/app/_nuxt/img/banner-01.d2c28c7.png)',
+          flex: '0 0 50%',
+          maxWidth: '50%',
+          position: 'relative',
+          backgroundImage: 'url(https://images.careerviet.vn/content/images/pv-nha-tuyen-dung-tai-sao-khong-careerbuilder.png)',
           backgroundRepeat: 'no-repeat',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          minHeight: '100%',
+          minHeight: '100%'
         }}
         aria-label="Recruiter login banner"
-      />
+      >
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background:
+              'linear-gradient(120deg, rgba(0,0,0,0.25) 0%, rgba(0,0,0,0.15) 40%, rgba(0,0,0,0.0) 100%)'
+          }}
+        />
+      </div>
     </div>
   );
 };
