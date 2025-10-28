@@ -1,8 +1,13 @@
 import axios from "axios";
 import Swal from 'sweetalert2';
 
+const baseURL = import.meta.env.VITE_API_URL;
+if (!baseURL) {
+  throw new Error('VITE_API_URL is not defined. Please set it in your environment.');
+}
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000",
+  baseURL,
   withCredentials: true, 
 });
 

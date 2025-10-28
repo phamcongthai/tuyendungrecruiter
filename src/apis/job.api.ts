@@ -7,8 +7,13 @@ import type {
   JobFilters 
 } from '../types/job.type';
 
+const baseURL = import.meta.env.VITE_API_URL;
+if (!baseURL) {
+  throw new Error('VITE_API_URL is not defined. Please set it in your environment.');
+}
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  baseURL,
   withCredentials: true,
 });
 
