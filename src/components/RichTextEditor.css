@@ -1,0 +1,10 @@
+.rte-300 .tox-tinymce {
+  height: 300px !important;
+  min-height: 300px !important;
+}
+
+.rte-300 .tox-editor-container,
+.rte-300 .tox-sidebar-wrap {
+  min-height: 300px !important;
+}
+

@@ -91,7 +91,7 @@ const Header: React.FC = () => {
 
       if (result.isConfirmed) {
         const res = await authAPI.logout();
-        localStorage.removeItem('token');
+        localStorage.removeItem('tokenRecruiter');
         Swal.fire({
           icon: 'success',
           title: 'Đăng xuất thành công',

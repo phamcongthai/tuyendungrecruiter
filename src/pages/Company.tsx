@@ -32,6 +32,7 @@ import {
   SaveOutlined
 } from '@ant-design/icons';
 import { companyAPI } from '../apis/company.api';
+import RichTextEditor from '../components/RichTextEditor';
 import type { CompanyProfile } from '../types/profile.type';
 import { useUser } from '../contexts/UserContext';
 import Swal from 'sweetalert2';
@@ -659,7 +660,12 @@ const Company: React.FC = () => {
                       label="Mô tả công ty"
                       name="description"
                     >
-                      <Input.TextArea rows={3} placeholder="Mô tả về công ty..." />
+                      <RichTextEditor
+                        height={240}
+                        value={form.getFieldValue('description')}
+                        onChange={(val) => form.setFieldsValue({ description: val })}
+                        placeholder="Mô tả về công ty..."
+                      />
                     </Form.Item>
                   </Col>
                   

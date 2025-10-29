@@ -14,7 +14,7 @@ const api = axios.create({
 // Request interceptor - thêm token vào header
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('tokenRecruiter');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,7 +33,7 @@ api.interceptors.response.use(
     const status = error.response?.status;
 
     if (status === 401) {
-      localStorage.removeItem('token');
+      localStorage.removeItem('tokenRecruiter');
       
       // Chỉ hiển thị thông báo nếu không phải từ checkRecruiterAccess
       if (!error.config?.url?.includes('/auth/me')) {

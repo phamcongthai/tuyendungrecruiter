@@ -36,7 +36,12 @@ export interface JobData {
   location?: string;
   salaryMin?: number;
   salaryMax?: number;
+  isSalaryNegotiable?: boolean;
   currency?: string;
+  headcount?: number;
+  levelVi?: string;
+  levelEn?: string;
+  education?: string;
   deadline?: Date | string;
   status: 'draft' | 'active' | 'expired';
   recruiterId: string;
@@ -72,7 +77,12 @@ export interface CreateJobData {
   location?: string;
   salaryMin?: number;
   salaryMax?: number;
+  isSalaryNegotiable?: boolean;
   currency?: string;
+  headcount?: number;
+  levelVi?: string;
+  levelEn?: string;
+  education?: string;
   deadline?: Date | string;
   status?: 'draft' | 'active' | 'expired';
   recruiterId?: string;
@@ -91,7 +101,12 @@ export interface UpdateJobData {
   location?: string;
   salaryMin?: number;
   salaryMax?: number;
+  isSalaryNegotiable?: boolean;
   currency?: string;
+  headcount?: number;
+  levelVi?: string;
+  levelEn?: string;
+  education?: string;
   deadline?: Date | string;
   status?: 'draft' | 'active' | 'expired';
   recruiterId?: string;

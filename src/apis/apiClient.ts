@@ -13,7 +13,7 @@ const apiClient = axios.create({
 // Add request interceptor to include token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('tokenRecruiter');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -33,7 +33,7 @@ apiClient.interceptors.response.use(
     // Handle common errors
     if (error.response?.status === 401) {
       // Unauthorized - redirect to login
-      localStorage.removeItem('access_token');
+      localStorage.removeItem('tokenRecruiter');
       window.location.href = '/login';
     }
     return Promise.reject(error);

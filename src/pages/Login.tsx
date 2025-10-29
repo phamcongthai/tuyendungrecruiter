@@ -31,7 +31,7 @@ const Login: React.FC = () => {
 
         // Lưu token nếu BE trả về kèm theo (ngoài cookie)
         if ((response as any).token) {
-          localStorage.setItem('token', (response as any).token);
+          localStorage.setItem('tokenRecruiter', (response as any).token);
         }
 
         Swal.fire({

@@ -6,7 +6,8 @@ import {
   BarChartOutlined,
   SettingOutlined,
   TeamOutlined,
-  BankOutlined
+  BankOutlined,
+  RobotOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -39,6 +40,11 @@ const Sidebar: React.FC = () => {
           key: '/company',
           icon: <BankOutlined />,
           label: 'Quản lý công ty',
+        },
+        {
+          key: '/ai',
+          icon: <RobotOutlined />,
+          label: 'Trợ lý AI',
         }
       ]
     },

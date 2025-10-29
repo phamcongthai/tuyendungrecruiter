@@ -72,7 +72,7 @@ export const authAPI = {
   // Kiểm tra trạng thái đăng nhập
   checkAuth: async (): Promise<AuthResponse> => {
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('tokenRecruiter');
       if (!token) {
         throw new Error('Không có token');
       }

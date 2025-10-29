@@ -15,6 +15,7 @@ import {
   Space,
   Spin,
   Steps,
+  Radio,
 } from 'antd';
 import {
   SaveOutlined,
@@ -35,8 +36,8 @@ import {
 import { updateJob, fetchJobById } from '../apis/job.api';
 import { jobCategoriesAPI } from '../apis/job-categories.api';
 import dayjs from 'dayjs';
+import RichTextEditor from './RichTextEditor';
 
-const { TextArea } = Input;
 const { Option } = Select;
 const { Title, Text } = Typography;
 
@@ -58,6 +59,10 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   // No need for companies state - backend handles company assignment
   const [jobData, setJobData] = useState<JobData | null>(null);
+  const [isSalaryNegotiable, setIsSalaryNegotiable] = useState(false);
+  const LEVEL_VI_OPTIONS = ['Thực tập sinh', 'Mới tốt nghiệp', 'Nhân viên', 'Chuyên viên', 'Trưởng nhóm', 'Trưởng phòng', 'Giám đốc'];
+  const LEVEL_EN_OPTIONS = ['Intern', 'Fresher', 'Junior', 'Mid-level', 'Senior', 'Lead', 'Manager', 'Director'];
+  const EDUCATION_OPTIONS = ['Không yêu cầu', 'Trung cấp', 'Cao đẳng', 'Đại học', 'Thạc sĩ', 'Tiến sĩ'];
 
   // Array state for dynamic fields
   const [skills, setSkills] = useState<string[]>(['']);
@@ -111,14 +116,20 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
         currency: job.currency || 'VND',
         salaryMin: job.salaryMin,
         salaryMax: job.salaryMax,
+        isSalaryNegotiable: job.isSalaryNegotiable || false,
         expiresAt: job.deadline ? dayjs(job.deadline) : null,
         status: (job as any).status || 'draft',
         jobCategoryId: job.jobCategoryId,
         recruiterId: job.recruiterId,
         companyId: job.companyId,
         deleted: job.deleted || false,
+        headcount: job.headcount || 1,
+        levelVi: (job as any).levelVi || undefined,
+        levelEn: (job as any).levelEn || undefined,
+        education: (job as any).education || undefined,
         // companyId handled by backend
       });
+      setIsSalaryNegotiable(!!job.isSalaryNegotiable);
     } catch (error: any) {
       message.error('Failed to load job data');
       throw error;
@@ -173,6 +184,12 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
         companyId: (values as any).companyId,
         deleted: (values as any).deleted,
       };
+
+      if (isSalaryNegotiable) {
+        (updateData as any).isSalaryNegotiable = true;
+        delete (updateData as any).salaryMin;
+        delete (updateData as any).salaryMax;
+      }
 
       await updateJob(jobId, updateData);
       message.success('Job updated successfully!');
@@ -294,11 +311,10 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
                     { min: 50, message: 'Mô tả công việc phải có ít nhất 50 ký tự' },
                   ]}
                 >
-                  <TextArea
-                    rows={6}
+                  <RichTextEditor
+                    value={form.getFieldValue('description')}
+                    onChange={(val) => form.setFieldsValue({ description: val })}
                     placeholder="Mô tả chi tiết về vị trí công việc, trách nhiệm và yêu cầu ứng viên..."
-                    showCount
-                    maxLength={2000}
                   />
                 </Form.Item>
               </Col>
@@ -405,39 +421,63 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
               </Col>
 
               <Col xs={24} md={8}>
-                <Form.Item
-                  name="salaryMin"
-                  label={<Text strong>Mức lương tối thiểu</Text>}
-                  rules={[
-                    { type: 'number', min: 0, message: 'Salary must be positive' },
-                  ]}
-                >
-                  <InputNumber
-                    className="w-full"
-                    placeholder="e.g. 15000000"
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
-                    size="large"
-                  />
+                <Form.Item label={<Text strong>Hình thức lương</Text>}>
+                  <Radio.Group
+                    value={isSalaryNegotiable ? 'negotiable' : 'range'}
+                    onChange={(e) => {
+                      const val = e.target.value === 'negotiable';
+                      setIsSalaryNegotiable(val);
+                      form.setFieldsValue({ isSalaryNegotiable: val, salaryMin: undefined, salaryMax: undefined });
+                    }}
+                  >
+                    <Radio value="negotiable">Thỏa thuận</Radio>
+                    <Radio value="range">Nhập số</Radio>
+                  </Radio.Group>
+                </Form.Item>
+                <Form.Item name="isSalaryNegotiable" hidden>
+                  <Input />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={8}>
-                <Form.Item
-                  name="salaryMax"
-                  label={<Text strong>Mức lương tối đa</Text>}
-                  rules={[
-                    { type: 'number', min: 0, message: 'Salary must be positive' },
-                  ]}
-                >
-                  <InputNumber
-                    className="w-full"
-                    placeholder="e.g. 25000000"
-                    formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
-                    size="large"
-                  />
+                <Form.Item name="headcount" label={<Text strong>Số lượng cần tuyển</Text>}>
+                  <InputNumber className="w-full" size="large" min={1} />
                 </Form.Item>
+              </Col>
+
+              <Col xs={24}>
+                <Row gutter={24}>
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="salaryMin"
+                      label={<Text strong>Mức lương tối thiểu</Text>}
+                    >
+                      <InputNumber
+                        disabled={isSalaryNegotiable}
+                        className="w-full"
+                        placeholder="e.g. 15000000"
+                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+                        size="large"
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col xs={24} md={12}>
+                    <Form.Item
+                      name="salaryMax"
+                      label={<Text strong>Mức lương tối đa</Text>}
+                    >
+                      <InputNumber
+                        disabled={isSalaryNegotiable}
+                        className="w-full"
+                        placeholder="e.g. 25000000"
+                        formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                        parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+                        size="large"
+                      />
+                    </Form.Item>
+                  </Col>
+                </Row>
               </Col>
 
               <Col xs={24} md={12}>
@@ -487,12 +527,11 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
                   name="requirements"
                   label={<Text strong>Yêu cầu ứng viên</Text>}
                 >
-                  <TextArea
-                    rows={6}
+                  <RichTextEditor
+                    height={440}
+                    value={form.getFieldValue('requirements')}
+                    onChange={(val) => form.setFieldsValue({ requirements: val })}
                     placeholder="Nhập các yêu cầu đối với ứng viên..."
-                    showCount
-                    maxLength={1000}
-                    className="rounded-lg"
                   />
                 </Form.Item>
               </Col>
@@ -502,18 +541,47 @@ const JobEditForm: React.FC<JobEditFormProps> = ({
                   name="benefits"
                   label={<Text strong>Quyền lợi</Text>}
                 >
-                  <TextArea
-                    rows={6}
+                  <RichTextEditor
+                    height={440}
+                    value={form.getFieldValue('benefits')}
+                    onChange={(val) => form.setFieldsValue({ benefits: val })}
                     placeholder="Nhập các quyền lợi khi làm việc..."
-                    showCount
-                    maxLength={1000}
-                    className="rounded-lg"
                   />
                 </Form.Item>
               </Col>
 
               <Col xs={24} md={8}>
                 {renderArrayField('Kỹ năng cần thiết', 'Nhập kỹ năng')}
+              </Col>
+
+              <Col xs={24} md={8}>
+                <Form.Item name="levelVi" label={<Text strong>Cấp bậc (VI)</Text>}>
+                  <Select placeholder="Chọn cấp bậc" allowClear size="large">
+                    {LEVEL_VI_OPTIONS.map((l) => (
+                      <Option key={l} value={l}>{l}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={8}>
+                <Form.Item name="levelEn" label={<Text strong>Job level (EN)</Text>}>
+                  <Select placeholder="Select level" allowClear size="large">
+                    {LEVEL_EN_OPTIONS.map((l) => (
+                      <Option key={l} value={l}>{l}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
+              </Col>
+
+              <Col xs={24} md={8}>
+                <Form.Item name="education" label={<Text strong>Học vấn</Text>}>
+                  <Select placeholder="Chọn học vấn" allowClear size="large">
+                    {EDUCATION_OPTIONS.map((e) => (
+                      <Option key={e} value={e}>{e}</Option>
+                    ))}
+                  </Select>
+                </Form.Item>
               </Col>
 
               <Col xs={24} md={8}>

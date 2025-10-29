@@ -7,6 +7,7 @@ import Profile from '../pages/Profile';
 import Company from '../pages/Company';
 import Jobs from '../pages/Jobs';
 import ApplicationsPage from '../pages/Applications';
+import AIAssistant from '../pages/AIAssistant';
 import EmailVerification from '../pages/EmailVerification';
 import ResendVerification from '../pages/ResendVerification';
 import ProtectedRoute from './protectedRoute';
@@ -46,6 +47,7 @@ const AppRouter: React.FC = () => {
           {/* Backward-compatible redirect for legacy draft route */}
           <Route path="/jobs/draft" element={<Navigate to="/jobs?tab=draft" replace />} />
           <Route path="/applications" element={<ApplicationsPage />} />
+          <Route path="/ai" element={<AIAssistant />} />
         </Route>
       </Routes>
   );
