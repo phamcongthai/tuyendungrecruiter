@@ -128,10 +128,10 @@ const Header: React.FC = () => {
       {/* Left side - Brand */}
       <div className="header-brand" onClick={() => navigate('/dashboard')}>
         <div className="brand-logo">
-          TC
+          HW
         </div>
         <div>
-          <div className="brand-text">ThaiCV</div>
+          <div className="brand-text">Hiwork</div>
         </div>
         <div className="header-subtitle">
           Nhà tuyển dụng

@@ -15,6 +15,8 @@ import {
   Badge,
   Statistic,
   Progress,
+  Tabs,
+  Descriptions,
 } from 'antd';
 import {
   EditOutlined,
@@ -200,169 +202,140 @@ const JobDetail: React.FC<JobDetailProps> = ({
         <Row gutter={32}>
           {/* Main Content */}
           <Col xs={24} lg={16}>
-                         {/* Job Overview Card */}
-             <div className="mb-6 bg-white p-6 rounded-lg">
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <Title level={4} className="text-gray-800 mb-0">
-                    <FileTextOutlined className="mr-2 text-blue-500" />
-                    Mô tả công việc
-                  </Title>
-                  <div className="flex gap-2">
-                    <Button 
-                      icon={<ShareAltOutlined />} 
-                      size="small"
-                      className="text-gray-600"
-                    >
-                      Chia sẻ
-                    </Button>
-                    <Button 
-                      icon={<BookOutlined />} 
-                      size="small"
-                      className="text-gray-600"
-                    >
-                      Lưu
-                    </Button>
-                  </div>
-                </div>
-                <Paragraph className="text-gray-700 leading-relaxed text-base">
-                  {job.description}
-                </Paragraph>
-              </div>
-
-              {/* Job Tags */}
-              <div className="flex flex-wrap gap-3 mb-6">
-                <Tag color="blue" className="rounded-full px-4 py-1 text-sm font-medium">
-                  {JOB_TYPE_LABELS[job.jobType]}
-                </Tag>
-                <Tag color="green" className="rounded-full px-4 py-1 text-sm font-medium">
-                  {WORKING_MODE_LABELS[job.workingMode]}
-                </Tag>
-                {job.jobCategory && (
-                  <Tag color="purple" className="rounded-full px-4 py-1 text-sm font-medium">
-                    {job.jobCategory.title}
-                  </Tag>
-                )}
-                {isExpired && (
-                  <Tag color="red" className="rounded-full px-4 py-1 text-sm font-medium">
-                    Hết hạn
-                  </Tag>
-                )}
-              </div>
-
-              {/* Company Info */}
-              {job.company && (
-                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-100">
-                  <div className="flex items-center">
-                    {job.company.logo && (
-                      <Avatar src={job.company.logo} size={80} className="mr-6" />
-                    )}
-                    <div className="flex-1">
-                      <Title level={4} className="text-gray-800 mb-2">
-                        <BankOutlined className="mr-2 text-blue-500" />
-                        {job.company.name}
-                      </Title>
-                      {job.location && (
-                        <Text className="text-gray-600 flex items-center gap-2">
-                          <EnvironmentOutlined />
-                          {job.location}
-                        </Text>
-                      )}
-                    </div>
-                    <Button type="primary" className="bg-blue-500 border-blue-500">
-                      Xem công ty
-                    </Button>
-                  </div>
-                </div>
-                             )}
-             </div>
-
-            {/* Requirements, Benefits, Skills */}
-            <div className="space-y-6 bg-gray-50 p-6 rounded-lg">
-              {/* Requirements */}
-              {job.requirements && (
-                <div>
-                  <Title level={5} className="text-gray-800 mb-4">
-                    <FileTextOutlined className="mr-2 text-green-500" />
-                    Yêu cầu ứng viên
-                  </Title>
-                  <Paragraph className="text-gray-700 whitespace-pre-line leading-relaxed text-base">
-                    {job.requirements}
-                  </Paragraph>
-                </div>
-              )}
-
-              {/* Benefits */}
-              {job.benefits && (
-                <div>
-                  <Title level={5} className="text-gray-800 mb-4">
-                    <TrophyOutlined className="mr-2 text-yellow-500" />
-                    Quyền lợi
-                  </Title>
-                  <Paragraph className="text-gray-700 whitespace-pre-line leading-relaxed text-base">
-                    {job.benefits}
-                  </Paragraph>
-                </div>
-              )}
-
-              {/* Skills */}
-              {job.skills && job.skills.length > 0 && (
-                <div>
-                  <Title level={5} className="text-gray-800 mb-4">
-                    <ToolOutlined className="mr-2 text-purple-500" />
-                    Kỹ năng cần thiết
-                  </Title>
-                  <div className="flex flex-wrap gap-2">
-                    {job.skills.map((skill: string, index: number) => (
-                      <Tag 
-                        key={index} 
-                        color="processing" 
-                        className="rounded-full px-3 py-1 text-sm font-medium"
-                      >
-                        {skill}
-                      </Tag>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Empty state for additional info */}
-            {(!job.requirements || job.requirements.trim() === '') &&
-             (!job.benefits || job.benefits.trim() === '') &&
-             (!job.skills || job.skills.length === 0) && (
-              <Card className="shadow-sm border-0 mt-6">
-                <Empty
-                  description="Chưa có thông tin bổ sung cho công việc này"
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                />
-              </Card>
-            )}
+            <Card className="mb-6">
+              <Tabs
+                defaultActiveKey="overview"
+                items={[
+                  {
+                    key: 'overview',
+                    label: 'Tổng quan',
+                    children: (
+                      <div>
+                        <div className="mb-6">
+                          <div className="flex items-center justify-between mb-4">
+                            <Title level={4} className="text-gray-800 mb-0">
+                              <FileTextOutlined className="mr-2 text-blue-500" />
+                              Mô tả công việc
+                            </Title>
+                            <div className="flex gap-2">
+                              <Button icon={<ShareAltOutlined />} size="small" className="text-gray-600">Chia sẻ</Button>
+                              <Button icon={<BookOutlined />} size="small" className="text-gray-600">Lưu</Button>
+                            </div>
+                          </div>
+                          <Paragraph className="text-gray-700 leading-relaxed text-base">{job.description}</Paragraph>
+                        </div>
+                        <div className="flex flex-wrap gap-3 mb-6">
+                          <Tag color="blue" className="rounded-full px-4 py-1 text-sm font-medium">{JOB_TYPE_LABELS[job.jobType]}</Tag>
+                          <Tag color="green" className="rounded-full px-4 py-1 text-sm font-medium">{WORKING_MODE_LABELS[job.workingMode]}</Tag>
+                          {job.jobCategory && (
+                            <Tag color="purple" className="rounded-full px-4 py-1 text-sm font-medium">{job.jobCategory.title}</Tag>
+                          )}
+                          {isExpired && (<Tag color="red" className="rounded-full px-4 py-1 text-sm font-medium">Hết hạn</Tag>)}
+                        </div>
+                        {job.company && (
+                          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-lg border border-blue-100">
+                            <div className="flex items-center">
+                              {job.company.logo && (<Avatar src={job.company.logo} size={80} className="mr-6" />)}
+                              <div className="flex-1">
+                                <Title level={4} className="text-gray-800 mb-2"><BankOutlined className="mr-2 text-blue-500" />{job.company.name}</Title>
+                                {job.location && (<Text className="text-gray-600 flex items-center gap-2"><EnvironmentOutlined />{job.location}</Text>)}
+                              </div>
+                              <Button type="primary" className="bg-blue-500 border-blue-500">Xem công ty</Button>
+                            </div>
+                          </div>
+                        )}
+                        <div className="space-y-6 pt-6">
+                          {job.requirements && (
+                            <div>
+                              <Title level={5} className="text-gray-800 mb-4"><FileTextOutlined className="mr-2 text-green-500" />Yêu cầu ứng viên</Title>
+                              <Paragraph className="text-gray-700 whitespace-pre-line leading-relaxed text-base">{job.requirements}</Paragraph>
+                            </div>
+                          )}
+                          {job.benefits && (
+                            <div>
+                              <Title level={5} className="text-gray-800 mb-4"><TrophyOutlined className="mr-2 text-yellow-500" />Quyền lợi</Title>
+                              <Paragraph className="text-gray-700 whitespace-pre-line leading-relaxed text-base">{job.benefits}</Paragraph>
+                            </div>
+                          )}
+                          {job.skills && job.skills.length > 0 && (
+                            <div>
+                              <Title level={5} className="text-gray-800 mb-4"><ToolOutlined className="mr-2 text-purple-500" />Kỹ năng cần thiết</Title>
+                              <div className="flex flex-wrap gap-2">
+                                {job.skills.map((skill: string, index: number) => (
+                                  <Tag key={index} color="processing" className="rounded-full px-3 py-1 text-sm font-medium">{skill}</Tag>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          {(!job.requirements || job.requirements.trim() === '') && (!job.benefits || job.benefits.trim() === '') && (!job.skills || job.skills.length === 0) && (
+                            <Card className="shadow-sm border-0">
+                              <Empty description="Chưa có thông tin bổ sung cho công việc này" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                            </Card>
+                          )}
+                        </div>
+                      </div>
+                    ),
+                  },
+                  {
+                    key: 'applications',
+                    label: 'Ứng viên',
+                    children: (
+                      <div>
+                        {appsLoading ? (
+                          <div className="text-center py-6"><Spin /></div>
+                        ) : applications.length === 0 ? (
+                          <Empty description="Chưa có ứng viên ứng tuyển" />
+                        ) : (
+                          <div className="space-y-3">
+                            {applications.map((app) => {
+                              const userName = app.account?.fullName || (typeof app.userId === 'object' ? app.userId?.fullName : null) || app.userProfile?.desiredPosition || (typeof app.userId === 'string' ? app.userId : 'Ứng viên');
+                              const userEmail = app.account?.email || (typeof app.userId === 'object' ? app.userId?.email : null) || 'N/A';
+                              return (
+                                <div key={app._id} className="flex items-center justify-between p-3 rounded-lg border border-gray-100">
+                                  <div className="flex items-center gap-3">
+                                    <Avatar icon={<UserOutlined />} />
+                                    <div>
+                                      <div className="font-medium">{userName}</div>
+                                      <div className="text-sm text-gray-500">
+                                        {userEmail !== 'N/A' && `${userEmail} • `}
+                                        Trạng thái: <span className={`font-medium ${app.status === 'accepted' ? 'text-green-600' : app.status === 'rejected' ? 'text-red-600' : app.status === 'withdrawn' ? 'text-gray-600' : 'text-yellow-600'}`}>{app.status === 'pending' ? 'Chờ xét duyệt' : app.status === 'accepted' ? 'Đã chấp nhận' : app.status === 'rejected' ? 'Đã từ chối' : 'Đã rút đơn'}</span>
+                                      </div>
+                                      {app.note && (<div className="text-xs text-gray-400 mt-1">Ghi chú: {app.note}</div>)}
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {app.status === 'pending' && (
+                                      <>
+                                        <Button size="small" type="primary" onClick={() => applicationsAPI.updateStatus(app._id, 'accepted').then(loadApplications)}>Chấp nhận</Button>
+                                        <Button size="small" danger onClick={() => applicationsAPI.updateStatus(app._id, 'rejected').then(loadApplications)}>Từ chối</Button>
+                                      </>
+                                    )}
+                                    {app.status === 'accepted' && (<Tag color="green">Đã chấp nhận</Tag>)}
+                                    {app.status === 'rejected' && (<Tag color="red">Đã từ chối</Tag>)}
+                                    {app.status === 'withdrawn' && (<Tag color="default">Đã rút đơn</Tag>)}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    ),
+                  },
+                ]}
+              />
+            </Card>
           </Col>
 
           {/* Sidebar */}
           <Col xs={24} lg={8}>
             <div className="space-y-6">
-                                            {/* Action Buttons */}
-               <div className="bg-white p-6 rounded-lg">
-                 <div className="space-y-4">
-                  <Button
-                    type="primary"
-                    icon={<EditOutlined />}
-                    onClick={() => onEdit(job)}
-                    className="w-full h-12 bg-blue-500 border-blue-500 hover:bg-blue-600"
-                    size="large"
-                  >
-                    Chỉnh sửa tin tuyển dụng
-                  </Button>
+              {/* Action Buttons */}
+              <div className="bg-white p-6 rounded-lg">
+                <div className="space-y-4">
+                  <Button type="primary" icon={<EditOutlined />} onClick={() => onEdit(job)} className="w-full h-12 bg-blue-500 border-blue-500 hover:bg-blue-600" size="large">Chỉnh sửa tin tuyển dụng</Button>
                   <div className="flex gap-3">
-                    <Button
-                      type="default"
-                      icon={(job as any).status === 'active' ? <CloseCircleOutlined /> : <CheckCircleOutlined />}
-                      onClick={handleToggleStatus}
-                      loading={actionLoading}
-                      className="flex-1"
-                    >
+                    <Button type="default" icon={(job as any).status === 'active' ? <CloseCircleOutlined /> : <CheckCircleOutlined />} onClick={handleToggleStatus} loading={actionLoading} className="flex-1">
                       {(job as any).status === 'active' ? 'Tạm dừng' : 'Kích hoạt'}
                     </Button>
                   </div>
@@ -373,30 +346,12 @@ const JobDetail: React.FC<JobDetailProps> = ({
               {(job.salaryMin || job.salaryMax) && (
                 <div className="bg-white p-6 rounded-lg">
                   <div className="text-center">
-                    <Title level={5} className="text-gray-800 mb-4">
-                      <DollarOutlined className="mr-2 text-green-500" />
-                      Mức lương
-                    </Title>
+                    <Title level={5} className="text-gray-800 mb-4"><DollarOutlined className="mr-2 text-green-500" />Mức lương</Title>
                     <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-100">
                       <Statistic
-                        value={job.salaryMin && job.salaryMax 
-                          ? `${formatCurrency(job.salaryMin)} - ${formatCurrency(job.salaryMax)}`
-                          : job.salaryMin 
-                          ? `Từ ${formatCurrency(job.salaryMin)}`
-                          : job.salaryMax
-                          ? `Đến ${formatCurrency(job.salaryMax)}`
-                          : 'Thỏa thuận'
-                        }
-                        valueStyle={{ 
-                          color: '#059669', 
-                          fontSize: '20px',
-                          fontWeight: 'bold'
-                        }}
-                        suffix={
-                          <span className="text-sm text-gray-500 ml-1">
-                            {job.currency}
-                          </span>
-                        }
+                        value={job.salaryMin && job.salaryMax ? `${formatCurrency(job.salaryMin)} - ${formatCurrency(job.salaryMax)}` : job.salaryMin ? `Từ ${formatCurrency(job.salaryMin)}` : job.salaryMax ? `Đến ${formatCurrency(job.salaryMax)}` : 'Thỏa thuận'}
+                        valueStyle={{ color: '#059669', fontSize: '20px', fontWeight: 'bold' }}
+                        suffix={<span className="text-sm text-gray-500 ml-1">{job.currency}</span>}
                       />
                     </div>
                   </div>
@@ -406,43 +361,21 @@ const JobDetail: React.FC<JobDetailProps> = ({
               {/* Deadline Card */}
               {deadlineISO && (
                 <div className="bg-white p-6 rounded-lg">
-                  <Title level={5} className="text-gray-800 mb-4">
-                    <CalendarOutlined className="mr-2 text-blue-500" />
-                    Hạn nộp hồ sơ
-                  </Title>
+                  <Title level={5} className="text-gray-800 mb-4"><CalendarOutlined className="mr-2 text-blue-500" />Hạn nộp hồ sơ</Title>
                   <div className="space-y-4">
                     <div className="text-center">
-                      <Text className="text-xl font-bold text-gray-800">
-                        {dayjs(deadlineISO).format('DD/MM/YYYY')}
-                      </Text>
+                      <Text className="text-xl font-bold text-gray-800">{dayjs(deadlineISO).format('DD/MM/YYYY')}</Text>
                     </div>
                     {daysUntilDeadline !== null && (
                       <div className="space-y-3">
                         <div className="flex justify-between text-sm">
                           <span>Thời gian còn lại</span>
-                          <span className="font-medium">
-                            {daysUntilDeadline < 0 
-                              ? `${Math.abs(daysUntilDeadline)} ngày trước`
-                              : `${daysUntilDeadline} ngày`
-                            }
-                          </span>
+                          <span className="font-medium">{daysUntilDeadline < 0 ? `${Math.abs(daysUntilDeadline)} ngày trước` : `${daysUntilDeadline} ngày`}</span>
                         </div>
-                        <Progress 
-                          percent={daysUntilDeadline < 0 ? 100 : Math.max(0, 100 - (daysUntilDeadline * 3.33))}
-                          status={daysUntilDeadline < 0 ? 'exception' : daysUntilDeadline <= 7 ? 'active' : 'normal'}
-                          strokeColor={daysUntilDeadline < 0 ? '#ff4d4f' : daysUntilDeadline <= 7 ? '#faad14' : '#52c41a'}
-                        />
-                        <Tag 
-                          color={daysUntilDeadline < 0 ? 'red' : daysUntilDeadline <= 7 ? 'orange' : 'green'}
-                          className="w-full text-center rounded-full"
-                        >
+                        <Progress percent={daysUntilDeadline < 0 ? 100 : Math.max(0, 100 - (daysUntilDeadline * 3.33))} status={daysUntilDeadline < 0 ? 'exception' : daysUntilDeadline <= 7 ? 'active' : 'normal'} strokeColor={daysUntilDeadline < 0 ? '#ff4d4f' : daysUntilDeadline <= 7 ? '#faad14' : '#52c41a'} />
+                        <Tag color={daysUntilDeadline < 0 ? 'red' : daysUntilDeadline <= 7 ? 'orange' : 'green'} className="w-full text-center rounded-full">
                           <ClockCircleOutlined className="mr-1" />
-                          {daysUntilDeadline < 0 
-                            ? `Hết hạn ${Math.abs(daysUntilDeadline)} ngày trước`
-                            : daysUntilDeadline === 0
-                            ? 'Hết hạn hôm nay'
-                            : `${daysUntilDeadline} ngày còn lại`
-                          }
+                          {daysUntilDeadline < 0 ? `Hết hạn ${Math.abs(daysUntilDeadline)} ngày trước` : daysUntilDeadline === 0 ? 'Hết hạn hôm nay' : `${daysUntilDeadline} ngày còn lại`}
                         </Tag>
                       </div>
                     )}
@@ -452,189 +385,44 @@ const JobDetail: React.FC<JobDetailProps> = ({
 
               {/* Job Info Card */}
               <div className="bg-white p-6 rounded-lg">
-                <Title level={5} className="text-gray-800 mb-4">
-                  <UserOutlined className="mr-2 text-purple-500" />
-                  Thông tin công việc
-                </Title>
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Loại công việc</span>
-                    <Tag color="blue" className="rounded-full">
-                      {JOB_TYPE_LABELS[job.jobType]}
-                    </Tag>
-                  </div>
-                  
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">Hình thức làm việc</span>
-                    <Tag color="green" className="rounded-full">
-                      {WORKING_MODE_LABELS[job.workingMode]}
-                    </Tag>
-                  </div>
-
+                <Title level={5} className="text-gray-800 mb-4"><UserOutlined className="mr-2 text-purple-500" />Thông tin công việc</Title>
+                <Descriptions column={1} colon={false} size="small">
+                  <Descriptions.Item label={<span className="text-gray-600">Loại công việc</span>}>
+                    <Tag color="blue" className="rounded-full">{JOB_TYPE_LABELS[job.jobType]}</Tag>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<span className="text-gray-600">Hình thức làm việc</span>}>
+                    <Tag color="green" className="rounded-full">{WORKING_MODE_LABELS[job.workingMode]}</Tag>
+                  </Descriptions.Item>
                   {job.location && (
-                    <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Địa điểm</span>
-                      <span className="text-gray-800 font-medium">
-                        <EnvironmentOutlined className="mr-1" />
-                        {job.location}
-                      </span>
-                    </div>
+                    <Descriptions.Item label={<span className="text-gray-600">Địa điểm</span>}>
+                      <span className="text-gray-800 font-medium"><EnvironmentOutlined className="mr-1" />{job.location}</span>
+                    </Descriptions.Item>
                   )}
-
-                  <Divider className="my-4" />
-
-                  <div className="space-y-2">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Ngày tạo</span>
-                      <span className="text-gray-800 font-medium">
-                        {dayjs(job.createdAt).format('DD/MM/YYYY')}
-                      </span>
-                    </div>
-                    
-                    <div className="flex justify-between">
-                      <span className="text-gray-600">Cập nhật lần cuối</span>
-                      <span className="text-gray-800 font-medium">
-                        {dayjs(job.updatedAt).format('DD/MM/YYYY')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+                  <Descriptions.Item label={<span className="text-gray-600">Ngày tạo</span>}>
+                    <span className="text-gray-800 font-medium">{dayjs(job.createdAt).format('DD/MM/YYYY')}</span>
+                  </Descriptions.Item>
+                  <Descriptions.Item label={<span className="text-gray-600">Cập nhật lần cuối</span>}>
+                    <span className="text-gray-800 font-medium">{dayjs(job.updatedAt).format('DD/MM/YYYY')}</span>
+                  </Descriptions.Item>
+                </Descriptions>
               </div>
 
               {/* Quick Stats */}
               <div className="bg-white p-6 rounded-lg">
-                <Title level={5} className="text-gray-800 mb-4">
-                  <EyeOutlined className="mr-2 text-blue-500" />
-                  Thống kê
-                </Title>
+                <Title level={5} className="text-gray-800 mb-4"><EyeOutlined className="mr-2 text-blue-500" />Thống kê</Title>
                 <div className="space-y-3">
-                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg">
-                    <span className="text-gray-600">Lượt xem</span>
-                    <span className="font-bold text-blue-600">1,234</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
-                    <span className="text-gray-600">Đơn ứng tuyển</span>
-                    <span className="font-bold text-green-600">{appsTotal}</span>
-                  </div>
-                  <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg">
-                    <span className="text-gray-600">Lượt lưu</span>
-                    <span className="font-bold text-purple-600">23</span>
-                  </div>
+                  <div className="flex justify-between items-center p-3 bg-blue-50 rounded-lg"><span className="text-gray-600">Lượt xem</span><span className="font-bold text-blue-600">1,234</span></div>
+                  <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg"><span className="text-gray-600">Đơn ứng tuyển</span><span className="font-bold text-green-600">{appsTotal}</span></div>
+                  <div className="flex justify-between items-center p-3 bg-purple-50 rounded-lg"><span className="text-gray-600">Lượt lưu</span><span className="font-bold text-purple-600">23</span></div>
                 </div>
               </div>
 
-              {/* Applications List */}
+              {/* Danger Action */}
               <div className="bg-white p-6 rounded-lg">
-                <Title level={5} className="text-gray-800 mb-4">
-                  <UserOutlined className="mr-2 text-purple-500" />
-                  Ứng viên đã ứng tuyển
-                </Title>
-                {appsLoading ? (
-                  <div className="text-center py-6">
-                    <Spin />
-                  </div>
-                ) : applications.length === 0 ? (
-                  <Empty description="Chưa có ứng viên ứng tuyển" />
-                ) : (
-                  <div className="space-y-3">
-                    {applications.map((app) => {
-                      // Backend populate account từ accountId, nên ưu tiên sử dụng app.account
-                      const userName = app.account?.fullName || 
-                        (typeof app.userId === 'object' ? app.userId?.fullName : null) ||
-                        app.userProfile?.desiredPosition ||
-                        (typeof app.userId === 'string' ? app.userId : 'Ứng viên');
-                      
-                      const userEmail = app.account?.email || 
-                        (typeof app.userId === 'object' ? app.userId?.email : null) ||
-                        'N/A';
-                      
-                      return (
-                        <div key={app._id} className="flex items-center justify-between p-3 rounded-lg border border-gray-100">
-                          <div className="flex items-center gap-3">
-                            <Avatar icon={<UserOutlined />} />
-                            <div>
-                              <div className="font-medium">{userName}</div>
-                              <div className="text-sm text-gray-500">
-                                {userEmail !== 'N/A' && `${userEmail} • `}
-                                Trạng thái: <span className={`font-medium ${
-                                  app.status === 'accepted' ? 'text-green-600' :
-                                  app.status === 'rejected' ? 'text-red-600' :
-                                  app.status === 'withdrawn' ? 'text-gray-600' :
-                                  'text-yellow-600'
-                                }`}>
-                                  {app.status === 'pending' ? 'Chờ xét duyệt' :
-                                   app.status === 'accepted' ? 'Đã chấp nhận' :
-                                   app.status === 'rejected' ? 'Đã từ chối' :
-                                   'Đã rút đơn'}
-                                </span>
-                              </div>
-                              {app.note && (
-                                <div className="text-xs text-gray-400 mt-1">
-                                  Ghi chú: {app.note}
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            {app.status === 'pending' && (
-                              <>
-                                <Button 
-                                  size="small" 
-                                  type="primary"
-                                  onClick={() => applicationsAPI.updateStatus(app._id, 'accepted').then(loadApplications)}
-                                >
-                                  Chấp nhận
-                                </Button>
-                                <Button 
-                                  size="small" 
-                                  danger 
-                                  onClick={() => applicationsAPI.updateStatus(app._id, 'rejected').then(loadApplications)}
-                                >
-                                  Từ chối
-                                </Button>
-                              </>
-                            )}
-                            {app.status === 'accepted' && (
-                              <Tag color="green">Đã chấp nhận</Tag>
-                            )}
-                            {app.status === 'rejected' && (
-                              <Tag color="red">Đã từ chối</Tag>
-                            )}
-                            {app.status === 'withdrawn' && (
-                              <Tag color="default">Đã rút đơn</Tag>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
-              {/* Action Buttons */}
-              <div className="bg-white p-6 rounded-lg">
-                <Title level={5} className="text-gray-800 mb-4">
-                  <DeleteOutlined className="mr-2 text-red-500" />
-                  Hành động
-                </Title>
+                <Title level={5} className="text-gray-800 mb-4"><DeleteOutlined className="mr-2 text-red-500" />Hành động</Title>
                 <div className="space-y-3">
-                  <Popconfirm
-                    title="Xóa tin tuyển dụng"
-                    description="Bạn có chắc chắn muốn xóa tin tuyển dụng này? Hành động này không thể hoàn tác."
-                    onConfirm={handleDelete}
-                    okText="Có"
-                    cancelText="Không"
-                    okType="danger"
-                  >
-                    <Button
-                      danger
-                      icon={<DeleteOutlined />}
-                      loading={actionLoading}
-                      className="w-full"
-                      size="large"
-                    >
-                      Xóa tin tuyển dụng
-                    </Button>
+                  <Popconfirm title="Xóa tin tuyển dụng" description="Bạn có chắc chắn muốn xóa tin tuyển dụng này? Hành động này không thể hoàn tác." onConfirm={handleDelete} okText="Có" cancelText="Không" okType="danger">
+                    <Button danger icon={<DeleteOutlined />} loading={actionLoading} className="w-full" size="large">Xóa tin tuyển dụng</Button>
                   </Popconfirm>
                 </div>
               </div>
