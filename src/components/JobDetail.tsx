@@ -6,7 +6,6 @@ import {
   Typography,
   Tag,
   Button,
-  Divider,
   Avatar,
   Empty,
   Spin,

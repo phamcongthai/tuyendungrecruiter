@@ -176,7 +176,10 @@ const AIAnalysis: React.FC = () => {
                   loading={loadingJobs}
                   value={selectedJobId}
                   onChange={setSelectedJobId}
-                  filterOption={(input, option) => (option?.children as string).toLowerCase().includes(input.toLowerCase())}
+                  filterOption={(input, option) => {
+                    const label = (option?.label ?? '') as string;
+                    return label.toLowerCase().includes(input.toLowerCase());
+                  }}
                   style={{ width: '100%' }}
                 >
                   {jobs.map((j) => (
@@ -246,5 +249,6 @@ const AIAnalysis: React.FC = () => {
 };
 
 export default AIAnalysis;
+
 
 
