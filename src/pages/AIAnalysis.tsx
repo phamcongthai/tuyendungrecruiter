@@ -4,6 +4,7 @@ import { BulbOutlined, RobotOutlined, ThunderboltOutlined, ExperimentOutlined } 
 import { fetchJobs } from '../apis/job.api';
 import type { JobData, JobFilters } from '../types/job.type';
 import { applicationsAPI, type ApplicationItem } from '../apis/applications.api';
+import { aiAPI } from '../apis/ai.api';
 
 const { Title, Text, Paragraph } = Typography;
 const { Option } = Select;
@@ -69,17 +70,17 @@ const AIAnalysis: React.FC = () => {
     }
     try {
       setAnalyzing(true);
-      // Fake processing time and mock AI scoring (BE flow: #)
-      await new Promise((r) => setTimeout(r, 900));
-      const scored: ScoredApplication[] = applications.map((app, idx) => {
-        const seed = (app._id || `${idx}`).split('').reduce((a, c) => a + c.charCodeAt(0), 0);
-        const aiScore = (seed % 51) + 50; // 50 - 100
-        const summary = aiScore > 85
-          ? 'Phù hợp rất cao với JD.'
-          : aiScore > 70
-          ? 'Phù hợp, nên shortlist.'
-          : 'Phù hợp trung bình, cần xem thêm.';
-        return { ...app, aiScore, aiSummary: summary };
+      const res = await aiAPI.rankApplicants(selectedJobId);
+      const mapSummary = (score: number) =>
+        score > 85 ? 'Phù hợp rất cao với JD.' : score > 70 ? 'Phù hợp, nên shortlist.' : 'Phù hợp trung bình, cần xem thêm.';
+      const scored: ScoredApplication[] = res.results.map((r) => {
+        const base: any = applications.find((a) => a._id === r.applicationId) || { _id: r.applicationId };
+        return {
+          ...(base as any),
+          account: r.account || (base as any).account,
+          aiScore: r.score,
+          aiSummary: mapSummary(r.score),
+        } as ScoredApplication;
       });
       setScoredApps(scored);
       if (scored.length === 0) {
@@ -206,7 +207,7 @@ const AIAnalysis: React.FC = () => {
               <Divider />
               <Space style={{ color: '#6b7280' }}>
                 <BulbOutlined />
-                <span>Luồng xử lý BE: # (hiện chỉ demo giao diện và kết quả mẫu)</span>
+                <span>Kết quả được tính theo AI từ CV và JD.</span>
               </Space>
             </Space>
           </Card>
