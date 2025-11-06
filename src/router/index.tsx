@@ -9,6 +9,8 @@ import Jobs from '../pages/Jobs';
 import ApplicationsPage from '../pages/Applications';
 import AIAssistant from '../pages/AIAssistant';
 import AIAnalysis from '../pages/AIAnalysis';
+import BannerPackagesPage from '../pages/Banners/Packages';
+import MyBannerOrdersPage from '../pages/Banners/MyOrders';
 import EmailVerification from '../pages/EmailVerification';
 import ResendVerification from '../pages/ResendVerification';
 import ProtectedRoute from './protectedRoute';
@@ -50,6 +52,10 @@ const AppRouter: React.FC = () => {
           <Route path="/applications" element={<ApplicationsPage />} />
           <Route path="/ai" element={<AIAssistant />} />
           <Route path="/ai/analysis" element={<AIAnalysis />} />
+          <Route path="/banners/packages" element={<BannerPackagesPage />} />
+          <Route path="/banners/orders" element={<MyBannerOrdersPage />} />
+          {/* Fallback route for payment result redirect */}
+          <Route path="/payment-result" element={<Navigate to="/banners/orders" replace />} />
         </Route>
       </Routes>
   );

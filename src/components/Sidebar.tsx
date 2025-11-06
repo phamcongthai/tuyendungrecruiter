@@ -7,7 +7,8 @@ import {
   SettingOutlined,
   TeamOutlined,
   BankOutlined,
-  RobotOutlined
+  RobotOutlined,
+  PictureOutlined
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 
@@ -58,6 +59,21 @@ const Sidebar: React.FC = () => {
         },
       ]
     },
+		{
+			title: 'Quảng cáo',
+			items: [
+				{
+					key: '/banners/packages',
+					icon: <PictureOutlined />,
+					label: 'Gói banner',
+				},
+				{
+					key: '/banners/orders',
+					icon: <PictureOutlined />,
+					label: 'Đơn của tôi',
+				},
+			]
+		},
     {
       title: 'Ứng viên',
       items: [
