@@ -53,8 +53,12 @@ const Company: React.FC = () => {
   const [logoUrl, setLogoUrl] = useState<string>('');
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>('');
+  const [backgroundUrl, setBackgroundUrl] = useState<string>('');
+  const [selectedBackgroundFile, setSelectedBackgroundFile] = useState<File | null>(null);
+  const [previewBackgroundUrl, setPreviewBackgroundUrl] = useState<string>('');
   const [searchText, setSearchText] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const backgroundInputRef = useRef<HTMLInputElement>(null);
 
   // Company size options
   const sizeOptions = [
@@ -124,6 +128,9 @@ const Company: React.FC = () => {
     setLogoUrl('');
     setSelectedFile(null);
     setPreviewUrl('');
+    setBackgroundUrl('');
+    setSelectedBackgroundFile(null);
+    setPreviewBackgroundUrl('');
     form.resetFields();
     setShowModal(true);
   };
@@ -133,6 +140,9 @@ const Company: React.FC = () => {
     setLogoUrl(company.logo || '');
     setSelectedFile(null);
     setPreviewUrl('');
+    setBackgroundUrl(company.background || '');
+    setSelectedBackgroundFile(null);
+    setPreviewBackgroundUrl('');
     form.setFieldsValue({
       name: company.name,
       description: company.description,
@@ -210,6 +220,40 @@ const Company: React.FC = () => {
     }
   };
 
+  const triggerBackgroundSelect = () => {
+    if (backgroundInputRef.current) {
+      backgroundInputRef.current.click();
+    }
+  };
+
+  const handleBackgroundFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file size (10MB limit for background)
+      if (file.size > 10 * 1024 * 1024) {
+        message.error('Kích thước file không được vượt quá 10MB');
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        message.error('Vui lòng chọn file ảnh');
+        return;
+      }
+
+      setSelectedBackgroundFile(file);
+      
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          setPreviewBackgroundUrl(e.target.result as string);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
 
   const handleSubmit = async (values: any) => {
     setModalLoading(true);
@@ -268,6 +312,26 @@ const Company: React.FC = () => {
         }
       }
 
+      // Upload background if there's a selected file and we have a company ID
+      if (selectedBackgroundFile && companyId) {
+        try {
+          const uploadResponse = await companyAPI.uploadBackground(companyId, selectedBackgroundFile);
+          if (uploadResponse.success && uploadResponse.data?.background) {
+            const newBackgroundUrl = uploadResponse.data.background;
+            message.success('Background đã được tải lên thành công!');
+            // Update the background URL state with the uploaded background
+            setBackgroundUrl(newBackgroundUrl);
+            // Update the response data with the complete company information
+            response.data = uploadResponse.data;
+          } else {
+            message.warning('Công ty đã được lưu nhưng không thể tải background lên');
+          }
+        } catch (uploadError: any) {
+          console.error('Background upload error:', uploadError);
+          message.error(`Lỗi upload background: ${uploadError.message || 'Unknown error'}`);
+        }
+      }
+
       // Show success message
       if (editingCompany) {
         await Swal.fire({
@@ -296,14 +360,18 @@ const Company: React.FC = () => {
       setSelectedFile(null);
       setPreviewUrl('');
       setLogoUrl('');
+      setSelectedBackgroundFile(null);
+      setPreviewBackgroundUrl('');
+      setBackgroundUrl('');
       setEditingCompany(null);
       await fetchCompanies();
 
     } catch (error: any) {
+      console.error('Company submit error:', error);
       await Swal.fire({
         icon: 'error',
         title: 'Có lỗi xảy ra!',
-        text: error.message || 'Không thể lưu thông tin công ty. Vui lòng kiểm tra kết nối mạng và thử lại.',
+        text: error.message || error.response?.data?.message || 'Không thể lưu thông tin công ty. Vui lòng kiểm tra kết nối mạng và thử lại.',
         confirmButtonColor: '#00B14F',
         confirmButtonText: 'Thử lại'
       });
@@ -317,8 +385,11 @@ const Company: React.FC = () => {
     form.resetFields();
     setSelectedFile(null);
     setPreviewUrl('');
+    setSelectedBackgroundFile(null);
+    setPreviewBackgroundUrl('');
     setEditingCompany(null);
     setLogoUrl('');
+    setBackgroundUrl('');
   };
 
   const columns = [
@@ -640,20 +711,114 @@ const Company: React.FC = () => {
                 </Form.Item>
               </Col>
 
-              {/* Company Information */}
-              <Col xs={24} md={16}>
-                <Row gutter={[16, 0]}>
-                  <Col xs={24}>
-                    <Form.Item
-                      label="Tên công ty"
-                      name="name"
-                      rules={[
-                        { required: true, message: 'Vui lòng nhập tên công ty' }
-                      ]}
+            </Row>
+
+            {/* Background Section */}
+            <Row gutter={[24, 16]}>
+              <Col xs={24}>
+                <Form.Item label="Ảnh Background công ty">
+                  <div
+                    onClick={triggerBackgroundSelect}
+                    style={{
+                      width: '100%',
+                      height: 200,
+                      cursor: 'pointer',
+                      position: 'relative',
+                      borderRadius: '12px',
+                      overflow: 'hidden',
+                      border: '2px dashed #d9d9d9',
+                      background: '#fafafa'
+                    }}
+                  >
+                    {(previewBackgroundUrl || backgroundUrl) ? (
+                      <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+                        <Image
+                          src={previewBackgroundUrl || backgroundUrl}
+                          alt="Company Background"
+                          width="100%"
+                          height={200}
+                          style={{ 
+                            objectFit: 'cover',
+                            border: previewBackgroundUrl ? '3px solid #fbbf24' : '3px solid #00B14F'
+                          }}
+                          preview={false}
+                        />
+                        <div style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          background: 'rgba(0, 0, 0, 0.5)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          opacity: 0,
+                          transition: 'opacity 0.3s ease'
+                        }}
+                        className="background-overlay"
+                        >
+                          <CameraOutlined style={{ fontSize: '32px', color: 'white' }} />
+                        </div>
+                      </div>
+                    ) : (
+                      <div style={{
+                        width: '100%',
+                        height: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexDirection: 'column',
+                        gap: '8px',
+                        color: '#999'
+                      }}>
+                        <CameraOutlined style={{ fontSize: '32px' }} />
+                        <Text style={{ fontSize: '14px', textAlign: 'center' }}>
+                          Nhấp để chọn ảnh background (1920x400 khuyến nghị)
+                        </Text>
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ marginTop: '12px', textAlign: 'center' }}>
+                    <Button 
+                      type="default"
+                      icon={<CameraOutlined />}
+                      onClick={triggerBackgroundSelect}
+                      size="small"
                     >
-                      <Input placeholder="Nhập tên công ty" />
-                    </Form.Item>
-                  </Col>
+                      {backgroundUrl ? 'Thay đổi background' : 'Chọn background'}
+                    </Button>
+                    
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleBackgroundFileSelect}
+                      ref={backgroundInputRef}
+                      style={{ display: 'none' }}
+                    />
+                    
+                    <div style={{ fontSize: '11px', color: '#64748b', marginTop: '8px' }}>
+                      JPG, PNG, WEBP ≤ 10MB • Kích thước khuyến nghị: 1920x400px
+                    </div>
+                  </div>
+                </Form.Item>
+              </Col>
+            </Row>
+
+            {/* Company Information */}
+            <Row gutter={[16, 0]}>
+              <Col xs={24}>
+                <Form.Item
+                  label="Tên công ty"
+                  name="name"
+                  rules={[
+                    { required: true, message: 'Vui lòng nhập tên công ty' }
+                  ]}
+                >
+                  <Input placeholder="Nhập tên công ty" />
+                </Form.Item>
+              </Col>
                   
                   <Col xs={24}>
                     <Form.Item
@@ -692,8 +857,6 @@ const Company: React.FC = () => {
                       <Input placeholder="contact@company.com" />
                     </Form.Item>
                   </Col>
-                </Row>
-              </Col>
             </Row>
 
             <Row gutter={[16, 0]}>
@@ -789,6 +952,9 @@ const Company: React.FC = () => {
 
       <style>{`
         .logo-overlay:hover {
+          opacity: 1 !important;
+        }
+        .background-overlay:hover {
           opacity: 1 !important;
         }
       `}</style>

@@ -113,6 +113,23 @@ export const companyAPI = {
     }
   },
 
+  // Upload company background
+  uploadBackground: async (companyId: string, file: File): Promise<CompanyResponse> => {
+    try {
+      const formData = new FormData();
+      formData.append('background', file);
+
+      const response = await api.post(`/companies/${companyId}/background`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { success: false, message: 'Failed to upload background' };
+    }
+  },
+
   // Delete company
   deleteCompany: async (companyId: string): Promise<CompanyResponse> => {
     try {

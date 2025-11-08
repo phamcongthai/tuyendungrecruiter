@@ -21,6 +21,7 @@ export interface CompanyProfile {
   name: string;
   description?: string;
   logo?: string;
+  background?: string;
   website?: string;
   email?: string;
   phone?: string;
@@ -60,6 +61,7 @@ export interface CreateCompanyData {
   name: string;
   description?: string;
   logo?: string;
+  background?: string;
   website?: string;
   email?: string;
   phone?: string;
@@ -74,6 +76,7 @@ export interface UpdateCompanyData {
   name?: string;
   description?: string;
   logo?: string;
+  background?: string;
   website?: string;
   email?: string;
   phone?: string;
