@@ -3,21 +3,17 @@ import {
   Button,
   message,
   Table,
-  Checkbox,
   Pagination,
   Tag,
-  Badge,
   Popconfirm,
+  Modal,
+  Select,
+  Spin,
 } from 'antd';
-import {
-  EditOutlined,
-  EyeOutlined,
-  EnvironmentOutlined,
-  DollarOutlined,
-  ClockCircleOutlined,
-  DeleteOutlined,
-} from '@ant-design/icons';
 import type { JobData, JobFilters as JobFiltersType } from '../types/job.type';
+import { fetchActiveJobPackages, type JobPackage } from '../apis/job-packages.api';
+import { createJobFeaturePayment } from '../apis/payments.api';
+import { authAPI } from '../apis/auth.api';
 import { fetchJobs } from '../apis/job.api';
 import { formatCurrency } from '../utils/currency';
 import './JobList.css';
@@ -42,6 +38,12 @@ const JobList: React.FC<JobListProps> = ({
   const [jobs, setJobs] = useState<JobData[]>([]);
   const [loading, setLoading] = useState(false);
   const [total, setTotal] = useState(0);
+  const [promoteVisible, setPromoteVisible] = useState(false);
+  const [loadingPackages, setLoadingPackages] = useState(false);
+  const [packages, setPackages] = useState<JobPackage[]>([]);
+  const [selectedPackageId, setSelectedPackageId] = useState<string | undefined>(undefined);
+  const [promoteJob, setPromoteJob] = useState<JobData | null>(null);
+  const [creatingPayment, setCreatingPayment] = useState(false);
 
   // Load jobs data
   const loadJobs = async () => {
@@ -60,6 +62,72 @@ const JobList: React.FC<JobListProps> = ({
   useEffect(() => {
     loadJobs();
   }, [filters]);
+
+  // Prefetch active packages for tooltip display of purchased package info
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await fetchActiveJobPackages();
+        setPackages(res.data || []);
+      } catch {}
+    })();
+  }, []);
+
+  const getFeaturedPackageLabel = (pkgId?: string | null) => {
+    if (!pkgId) return 'Đã mua gói nổi bật';
+    const p = packages.find((x) => x._id === pkgId);
+    if (!p) return 'Đã mua gói nổi bật';
+    return `${p.packageName} • ${formatCurrency(p.price)} • ${p.durationDays} ngày`;
+  };
+
+  const openPromoteModal = async (job: JobData) => {
+    setPromoteJob(job);
+    setPromoteVisible(true);
+    setSelectedPackageId(undefined);
+    setLoadingPackages(true);
+    try {
+      const res = await fetchActiveJobPackages();
+      setPackages(res.data || []);
+    } catch (e: any) {
+      message.error(e?.message || 'Không tải được danh sách gói nổi bật');
+      setPackages([]);
+    } finally {
+      setLoadingPackages(false);
+    }
+  };
+
+  const closePromoteModal = () => {
+    setPromoteVisible(false);
+    setPromoteJob(null);
+    setSelectedPackageId(undefined);
+  };
+
+  const handleConfirmPromote = async () => {
+    if (!promoteJob || !promoteJob._id) return;
+    if (!selectedPackageId) {
+      message.warning('Vui lòng chọn gói nổi bật');
+      return;
+    }
+    try {
+      setCreatingPayment(true);
+      const me: any = await authAPI.checkAuth();
+      const accountId: string | undefined = me?.id || me?.data?.id;
+      if (!accountId) {
+        message.error('Không lấy được tài khoản. Vui lòng đăng nhập lại.');
+        return;
+      }
+      const res = await createJobFeaturePayment({ packageId: selectedPackageId, jobId: promoteJob._id, accountId });
+      if (res?.paymentUrl) {
+        window.location.href = res.paymentUrl;
+      } else {
+        message.error('Không tạo được liên kết thanh toán');
+      }
+    } catch (e: any) {
+      message.error(e?.message || 'Không thể tạo thanh toán cho tin nổi bật');
+    } finally {
+      setCreatingPayment(false);
+    }
+  };
 
   // Handle pagination
   const handlePageChange = (page: number, pageSize: number) => {
@@ -103,20 +171,16 @@ const JobList: React.FC<JobListProps> = ({
   // Table columns
   const columns = [
     {
-      title: '',
-      dataIndex: 'select',
-      key: 'select',
-      width: 50,
-      render: () => <Checkbox />,
-    },
-    {
       title: 'Tên công việc',
       dataIndex: 'title',
       key: 'title',
       render: (text: string, record: JobData) => (
         <div className="job-title-cell">
-          <div className="job-title-main">
-            {text}
+          <div className="job-title-main" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span>{text}</span>
+            {record.isFeatured && (
+              <Tag color="gold" className="featured-tag">Nổi bật</Tag>
+            )}
           </div>
           {record.company && (
             <div className="job-company">
@@ -130,23 +194,13 @@ const JobList: React.FC<JobListProps> = ({
       title: 'Địa điểm',
       dataIndex: 'location',
       key: 'location',
-      render: (location: string) => (
-        <div className="location-cell">
-          <EnvironmentOutlined className="location-icon" />
-          <span>{location || 'N/A'}</span>
-        </div>
-      ),
+      render: (location: string) => (<span>{location || '-'}</span>),
     },
     {
       title: 'Lương',
       dataIndex: 'salary',
       key: 'salary',
-      render: (_: any, record: JobData) => (
-        <div className="salary-cell">
-          <DollarOutlined className="salary-icon" />
-          <span>{getSalaryDisplay(record)}</span>
-        </div>
-      ),
+      render: (_: any, record: JobData) => (<span>{getSalaryDisplay(record)}</span>),
     },
     {
       title: 'Hạn nộp',
@@ -154,14 +208,7 @@ const JobList: React.FC<JobListProps> = ({
       key: 'deadline',
       render: (_: any, record: JobData) => {
         const deadlineInfo = getDeadlineInfo(record);
-        return (
-          <div className="deadline-cell">
-            <ClockCircleOutlined className="deadline-icon" />
-            <Tag color={deadlineInfo.color}>
-              {deadlineInfo.text}
-            </Tag>
-          </div>
-        );
+        return <span>{deadlineInfo.text}</span>;
       },
     },
     {
@@ -171,45 +218,30 @@ const JobList: React.FC<JobListProps> = ({
       render: (status: string) => {
         const s = (status || 'draft') as string;
         const map: any = {
-          draft: { text: 'Nháp', status: 'default' },
-          active: { text: 'Hoạt động', status: 'success' },
-          expired: { text: 'Hết hạn', status: 'error' },
+          draft: { text: 'Nháp', color: undefined },
+          active: { text: 'Hoạt động', color: 'green' },
+          expired: { text: 'Hết hạn', color: 'red' },
         };
         const cfg = map[s] || map.draft;
-        return <Badge status={cfg.status} text={cfg.text} />;
+        return <Tag color={cfg.color}>{cfg.text}</Tag>;
       },
     },
     {
       title: 'Hành động',
       key: 'actions',
-      width: 150,
+      width: 220,
       render: (_: any, record: JobData) => (
         <div className="action-buttons">
-          <Button
-            type="text"
-            icon={<EyeOutlined />}
-            onClick={() => onViewJob(record)}
-            className="action-btn view-btn"
-            size="small"
-            title="Xem chi tiết"
-          />
-          <Button
-            type="text"
-            icon={<EditOutlined />}
-            onClick={() => onEditJob(record)}
-            className="action-btn edit-btn"
-            size="small"
-            title="Chỉnh sửa"
-          />
+          <Button type="link" onClick={() => onViewJob(record)} size="small">Xem</Button>
+          <Button type="link" onClick={() => onEditJob(record)} size="small">Sửa</Button>
           {filters.status === 'draft' && (
-            <Button
-              type="text"
-              onClick={() => record._id && onPublishJob && onPublishJob(record._id)}
-              className="action-btn"
-              size="small"
-            >
-              Đăng tin
-            </Button>
+            <Button type="link" onClick={() => record._id && onPublishJob && onPublishJob(record._id)} size="small">Đăng tin</Button>
+          )}
+          {record.status === 'active' && !record.isFeatured && (
+            <Button type="link" onClick={() => openPromoteModal(record)} size="small">Nổi bật</Button>
+          )}
+          {record.status === 'active' && record.isFeatured && (
+            <Tag color="gold">Đã mua</Tag>
           )}
           <Popconfirm
             title="Xóa tin tuyển dụng"
@@ -219,14 +251,7 @@ const JobList: React.FC<JobListProps> = ({
             cancelText="Hủy"
             okButtonProps={{ danger: true }}
           >
-            <Button
-              type="text"
-              icon={<DeleteOutlined />}
-              className="action-btn delete-btn"
-              size="small"
-              title="Xóa"
-              danger
-            />
+            <Button type="link" danger size="small">Xóa</Button>
           </Popconfirm>
         </div>
       ),
@@ -263,6 +288,39 @@ const JobList: React.FC<JobListProps> = ({
           />
         </div>
       )}
+
+      {/* Modal: Promote to Featured */}
+      <Modal
+        title="Đăng tin nổi bật"
+        open={promoteVisible}
+        onCancel={closePromoteModal}
+        onOk={handleConfirmPromote}
+        okText="Thanh toán"
+        okButtonProps={{ disabled: !selectedPackageId, loading: creatingPayment }}
+        destroyOnClose
+      >
+        {loadingPackages ? (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: 120 }}>
+            <Spin />
+          </div>
+        ) : packages.length === 0 ? (
+          <div>Hiện chưa có gói nổi bật nào. Vui lòng liên hệ quản trị viên.</div>
+        ) : (
+          <>
+            <div style={{ marginBottom: 8 }}>Chọn gói nổi bật:</div>
+            <Select
+              style={{ width: '100%' }}
+              placeholder="Chọn gói nổi bật"
+              value={selectedPackageId}
+              onChange={setSelectedPackageId as any}
+              options={packages.map((p) => ({
+                label: `${p.packageName} - ${formatCurrency(p.price)} - ${p.durationDays} ngày`,
+                value: p._id,
+              }))}
+            />
+          </>
+        )}
+      </Modal>
     </div>
   );
 };

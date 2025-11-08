@@ -69,24 +69,16 @@ export const authAPI = {
     }
   },
 
-  // Kiểm tra trạng thái đăng nhập
-  checkAuth: async (): Promise<AuthResponse> => {
-    try {
-      const token = localStorage.getItem('tokenRecruiter');
-      if (!token) {
-        throw new Error('Không có token');
-      }
-      
-      const response = await axios.get(`${API_BASE_URL}/auth/me`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      return response.data;
-    } catch (error: any) {
-      if (error.response?.data) {
-        return error.response.data;
-      }
-      throw new Error('Xác thực thất bại');
-    }
+  // Kiểm tra trạng thái đăng nhập (ưu tiên cookie HttpOnly, fallback Bearer token)
+  checkAuth: async (): Promise<any> => {
+    const token = localStorage.getItem('tokenRecruiter');
+    const headers: any = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+    const response = await axios.get(`${API_BASE_URL}/auth/me`, {
+      withCredentials: true,
+      headers,
+    });
+    return response.data;
   },
 
   // Xác thực email

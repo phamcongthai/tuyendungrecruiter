@@ -1,18 +1,18 @@
 /* JobList Component Styles - Simple Table Layout */
 
 .job-list-container {
-  background: #ffffff;
-  padding: 24px;
-  min-height: 100vh;
+  background: transparent;
+  padding: 0;
 }
 
 /* Job Table */
 .job-table-container {
-  background: white;
+  background: #ffffff;
   border-radius: 8px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #eaeaea;
   overflow: hidden;
   margin-bottom: 24px;
+  box-shadow: none;
 }
 
 .job-table {
@@ -20,22 +20,22 @@
 }
 
 .job-table .ant-table-thead > tr > th {
-  background: #fafafa;
-  border-bottom: 1px solid #f0f0f0;
+  background: #fafcff;
+  border-bottom: 1px solid #eef0f3;
   font-weight: 600;
-  color: #262626;
-  padding: 16px 12px;
-  font-size: 14px;
+  color: #0f172a;
+  padding: 14px 12px;
+  font-size: 13px;
 }
 
 .job-table .ant-table-tbody > tr > td {
-  border-bottom: 1px solid #f0f0f0;
-  padding: 16px 12px;
-  font-size: 14px;
+  border-bottom: 1px solid #f4f6f8;
+  padding: 14px 12px;
+  font-size: 13px;
 }
 
 .job-table .ant-table-tbody > tr:hover > td {
-  background: #f5f5f5;
+  background: #f8fafc;
 }
 
 /* Job Title Cell */
@@ -47,12 +47,12 @@
 
 .job-title-main {
   font-weight: 500;
-  color: #262626;
+  color: #0f172a;
   font-size: 14px;
 }
 
 .job-company {
-  color: #8c8c8c;
+  color: #64748b;
   font-size: 12px;
 }
 
@@ -74,12 +74,12 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #52c41a;
+  color: #00b14f;
   font-weight: 500;
 }
 
 .salary-icon {
-  color: #52c41a;
+  color: #00b14f;
   font-size: 14px;
 }
 
@@ -161,8 +161,8 @@
 }
 
 .job-pagination .ant-pagination-item-active {
-  background: #1890ff;
-  border-color: #1890ff;
+  background: #00b14f;
+  border-color: #00b14f;
 }
 
 .job-pagination .ant-pagination-item-active a {
@@ -178,8 +178,38 @@
 
 .job-pagination .ant-pagination-prev:hover,
 .job-pagination .ant-pagination-next:hover {
-  border-color: #1890ff;
-  color: #1890ff;
+  border-color: #00b14f;
+  color: #00b14f;
+}
+
+/* New styles */
+.company-logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  object-fit: cover;
+  border: 1px solid #eef0f3;
+  background: #fff;
+}
+
+.featured-tag {
+  border-radius: 999px;
+  padding: 0 8px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.promote-btn {
+  background: linear-gradient(45deg, #ff6b35, #f7931e);
+  color: #fff !important;
+  border: none !important;
+  box-shadow: 0 6px 14px rgba(247, 147, 30, 0.25);
+}
+.promote-btn:hover {
+  filter: brightness(1.05);
+  transform: translateY(-1px);
 }
 
 /* Responsive Design */

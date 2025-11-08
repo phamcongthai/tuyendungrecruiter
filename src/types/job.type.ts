@@ -50,6 +50,8 @@ export interface JobData {
   deleted?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  isFeatured?: boolean;
+  featuredPackageId?: string | null;
   // Populated fields from backend
   recruiter?: {
     _id: string;

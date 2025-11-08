@@ -87,6 +87,31 @@ const Jobs: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.search]);
 
+  // Handle VNPay return for job-feature payments
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const payment = params.get('payment');
+    const messageText = params.get('message');
+    if (payment) {
+      if (payment === 'success') {
+        message.success('Thanh toán tin nổi bật thành công');
+      } else if (payment === 'failed') {
+        message.error('Thanh toán tin nổi bật thất bại');
+      } else if (payment === 'error') {
+        message.error(messageText || 'Có lỗi xảy ra khi xử lý thanh toán');
+      }
+      // Clean query params and refresh list
+      const next = new URLSearchParams(location.search);
+      next.delete('payment');
+      next.delete('txnRef');
+      next.delete('message');
+      navigate({ pathname: '/jobs', search: next.toString() }, { replace: true });
+      // refresh jobs after redirect effect kicks in
+      loadJobs();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.search]);
+
 
   // Handle delete job
   const handleDeleteJob = async (id: string) => {
@@ -150,7 +175,7 @@ const Jobs: React.FC = () => {
 
 
   return (
-    <div style={{ width: '100%', height: '100%' }}>
+    <div className="jobs-page" style={{ width: '100%', height: '100%' }}>
       {/* Single Combined Card */}
       <Card className="jobs-main-card">
           {/* Header with title and create button */}
@@ -178,6 +203,7 @@ const Jobs: React.FC = () => {
           {/* Tabs for statuses */}
           <div className="mb-4">
             <Tabs
+              className="jobs-tabs"
               activeKey={activeTab}
               onChange={(key) => {
                 const tab = key as 'active' | 'expired' | 'draft';
@@ -197,14 +223,12 @@ const Jobs: React.FC = () => {
 
           {/* Results count */}
           <div className="mb-4 flex justify-between items-center">
-            <Text className="text-gray-600">
+            <Text className="results-count">
               Tìm thấy <strong>{total}</strong> tin tuyển dụng
               {filters.search && ` cho "${filters.search}"`}
             </Text>
             {(filters.jobType || filters.workingMode || filters.jobCategoryId || filters.status) && (
-              <Text className="text-blue-600 text-sm">
-                Đang áp dụng bộ lọc
-              </Text>
+              <Text className="filter-indicator">Đang áp dụng bộ lọc</Text>
             )}
           </div>
 
