@@ -1,15 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Form, Input, Button, Card, Typography, Divider } from 'antd';
-import { LockOutlined, MailOutlined } from '@ant-design/icons';
+import { LockOutlined, MailOutlined, GoogleOutlined } from '@ant-design/icons';
 import Swal from 'sweetalert2';
 import { authAPI } from '../apis/auth.api';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 
 const { Title } = Typography;
 
 const Login: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Handle Google OAuth redirect result
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('oauth') === 'success') {
+      (async () => {
+        try {
+          // Verify user has Recruiter role
+          const user = await authAPI.checkAuth();
+          if (user && user.roles && user.roles.includes('Recruiter')) {
+            Swal.fire({
+              icon: 'success',
+              title: 'Đăng nhập thành công!',
+              text: 'Chào mừng bạn đến với Hi word',
+              confirmButtonColor: '#00b14f',
+              timer: 2000
+            });
+            navigate('/dashboard');
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Đăng nhập thất bại',
+              text: 'Tài khoản của bạn không có quyền truy cập bảng điều khiển nhà tuyển dụng',
+              confirmButtonColor: '#00b14f'
+            });
+            await authAPI.logout();
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Có lỗi xảy ra',
+            text: 'Không thể xác thực tài khoản',
+            confirmButtonColor: '#00b14f'
+          });
+        }
+      })();
+    }
+  }, [location.search, navigate]);
+
+  const handleGoogleLogin = () => {
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '905114282586-lj1n3t68peq5nq8amurj5h7a24u0e5hu.apps.googleusercontent.com';
+    const redirectUri = `${apiBase}/auth/google/recruiter/callback`;
+    const url = `${apiBase}/auth/google/recruiter?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = url;
+  };
 
   const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
@@ -207,7 +254,30 @@ const Login: React.FC = () => {
                 {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
               </Button>
 
-              <Divider style={{ margin: '20px 0' }} />
+              <Divider style={{ margin: '20px 0' }}>Hoặc</Divider>
+              
+              <Button
+                block
+                size="large"
+                onClick={handleGoogleLogin}
+                icon={<GoogleOutlined />}
+                style={{
+                  height: 48,
+                  borderRadius: 12,
+                  border: '1px solid #d9d9d9',
+                  background: '#ffffff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  color: '#3c4043',
+                  fontWeight: 500,
+                  marginBottom: 20
+                }}
+              >
+                Đăng nhập với Google
+              </Button>
+
               <div style={{ textAlign: 'center', color: '#6b7280' }}>
                 Chưa có tài khoản?{' '}
                 <Link to="/register" style={{ color: '#111111', fontWeight: 600 }}>
